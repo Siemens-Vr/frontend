@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7f992e29-14e8-47df-8854-5c8563eb4738" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/admin/dashboard/suppliers/add/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/dashboard/suppliers/add/page.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/student/ui/dashboard/students/addStudent/addStudent.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/student/ui/dashboard/students/addStudent/addStudent.module.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +61,7 @@
       <workItem from="1726119520041" duration="10000" />
       <workItem from="1726149586748" duration="6366000" />
       <workItem from="1726205747313" duration="483000" />
-      <workItem from="1726206274505" duration="923000" />
+      <workItem from="1726206274505" duration="1546000" />
     </task>
     <servers />
   </component>
