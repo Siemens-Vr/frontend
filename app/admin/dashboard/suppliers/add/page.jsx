@@ -200,7 +200,7 @@ const SuppliersAddPage = () => {
             <option value="Petty Cash">Petty Cash</option>
           </select>
 
-          {/* Conditional Fields Based on Type Selection */}
+          
           {renderFields()}
 
           <button type="submit">Submit</button>
