@@ -8,56 +8,65 @@
 .form {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  gap: 20px;
 }
 
-.form input,
-.form textarea,
-.form select {
-  padding: 30px;
+.divInput {
+  display: flex;
+  flex-direction: column;
+  flex-basis: calc(50% - 10px);
+  margin-bottom: 20px;
+}
+
+.label {
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.divInput input,
+.divInput textarea,
+.divInput select {
+  padding: 15px;
   background-color: var(--bg);
   color: var(--text);
   border: 2px solid #2e374a;
   border-radius: 5px;
-  margin-bottom: 30px;
+  font-size: 16px;
 }
 
-.form input, .form select {
-  width: 45%;
-}
-
-.form textarea{
+.divInput input,
+.divInput select {
   width: 100%;
 }
 
-.form button{
+.divInput textarea {
   width: 100%;
-  padding: 30px;
+  height: 60px;
+}
+
+.buttonContainer {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.buttonContainer button {
+  width: 100%;
+  padding: 15px;
   background-color: teal;
   color: var(--text);
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 16px;
 }
+
 .successMessage {
   background-color: #4CAF50;
   color: white;
-  padding: 15px;
-  margin-bottom: 20px;
+  padding: 10px;
   border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-  animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
-  width: 100%;
-  max-width: 400px;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  margin-bottom: 20px;
 }

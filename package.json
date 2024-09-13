@@ -31,12 +31,14 @@
     "react-modal": "^3.16.1",
     "react-select": "^5.8.0",
     "recharts": "2.9.0",
+    "sharp": "^0.33.5",
     "styled-components": "^6.1.11",
-    "sweetalert2": "^11.11.0",
+    "sweetalert2": "^11.6.13",
     "use-debounce": "9.0.4",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/node": "22.5.4",
     "eslint": "8",
     "eslint-config-next": "14.0.1"
   }
