@@ -14,23 +14,30 @@
 .form input,
 .form textarea,
 .form select {
-  padding: 30px;
+  padding: 15px; /* Reduce padding to fit more content in the description */
   background-color: var(--bg);
   color: var(--text);
   border: 2px solid #2e374a;
   border-radius: 5px;
   margin-bottom: 30px;
+  font-size: 16px; /* Keeps font size consistent */
 }
 
-.form input, .form select {
+.form input,
+.form select {
   width: 45%;
 }
 
-.form textarea{
+.form textarea {
   width: 100%;
 }
 
-.form button{
+.form .description {
+  width: 100%; /* Makes the description field full width */
+  height: 60px; /* Adjust height to accommodate two lines */
+}
+
+.form button {
   width: 100%;
   padding: 30px;
   background-color: teal;
@@ -39,6 +46,7 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
 .successMessage {
   background-color: #4CAF50;
   color: white;
@@ -60,4 +68,24 @@
 @keyframes fadeOut {
   from { opacity: 1; }
   to { opacity: 0; }
+}
+
+/* New styles for labels */
+.label {
+  width: 100%;
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* Enhanced styles for select */
+.form select {
+  appearance: none; /* Removes default browser styling */
+  -webkit-appearance: none; /* Ensures cross-browser compatibility */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg%20xmlns="http://www.w3.org/2000/svg"%20viewBox="0%200%204%205"><path%20fill="none"%20stroke="%232e374a"%20stroke-width="1"%20d="M2%200L0%202h4zm0%205L0%203h4z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px 12px;
+  padding-right: 40px; /* Adds space for the custom dropdown arrow */
 }
