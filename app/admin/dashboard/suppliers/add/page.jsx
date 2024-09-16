@@ -27,20 +27,35 @@ const SuppliersAddPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Log form data to the console
-        console.log("Submitting form data:", formData);
+        // Format the data according to the API requirements
+        const formattedData = {
+            suppliers: formData.suppliers,
+            itemDescription: formData.itemDescription,
+            amountClaimed: parseFloat(formData.amountClaimed),
+            approver: formData.approver,
+            dateTakenToApprover: new Date(formData.dateTakenToApprover).toISOString(),
+            dateTakenToFinance: new Date(formData.dateTakenToFinance).toISOString(),
+            type: formData.type,
+            PvNo: formData.pvNo, // Ensure the backend field name is correct
+            claimNumber: formData.claimNumber,
+            accounted: formData.accounted,
+            dateAccounted: formData.dateAccounted ? new Date(formData.dateAccounted).toISOString() : null,
+        };
+
+        console.log("Submitting formatted form data:", formattedData);
 
         try {
-            const response = await fetch(`${config.baseURL}/staffs`, {
+            const response = await fetch("https://backend-1-gene.onrender.com/supplier", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(formattedData),
             });
+
             if (response.ok) {
-                console.log("Staff added successfully");
-                setSuccessMessage("Staff added successfully!");
+                console.log("Supplier added successfully");
+                setSuccessMessage("Supplier added successfully!");
                 setFormData({
                     suppliers: "",
                     itemDescription: "",
@@ -55,7 +70,7 @@ const SuppliersAddPage = () => {
                     dateAccounted: "",
                 });
             } else {
-                console.error("Failed to add Staff");
+                console.error("Failed to add Supplier", await response.text());
             }
         } catch (error) {
             console.error("Error:", error);
@@ -134,7 +149,7 @@ const SuppliersAddPage = () => {
                             </select>
                         </div>
                         <div className={styles.divInput}>
-                            <label htmlFor="dateAccounted" className={styles.label}>Date Accounted </label>
+                            <label htmlFor="dateAccounted" className={styles.label}>Date Accounted</label>
                             <input
                                 type="datetime-local"
                                 name="dateAccounted"

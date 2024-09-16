@@ -14,7 +14,7 @@
 .divInput {
   display: flex;
   flex-direction: column;
-  flex-basis: calc(50% - 10px);
+  flex-basis: calc(50% - 20px); /* Adjusted to increase width */
   margin-bottom: 20px;
 }
 
@@ -22,6 +22,7 @@
   font-weight: bold;
   color: var(--text);
   margin-bottom: 10px;
+  display: block;
 }
 
 .divInput input,
@@ -66,65 +67,9 @@
 .successMessage {
   background-color: #4CAF50;
   color: white;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-}
-.container {
-  background-color: var(--bgSoft);
-  padding: 20px;
-  border-radius: 10px;
-  margin-top: 20px;
-}
-
-.form {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.form input,
-.form textarea,
-.form select {
-  padding: 15px; /* Reduce padding to fit more content in the description */
-  background-color: var(--bg);
-  color: var(--text);
-  border: 2px solid #2e374a;
-  border-radius: 5px;
-  margin-bottom: 30px;
-  font-size: 16px; /* Keeps font size consistent */
-}
-
-.form input,
-.form select {
-  width: 45%;
-}
-
-.form textarea {
-  width: 100%;
-}
-
-.form .description {
-  width: 100%; /* Makes the description field full width */
-  height: 60px; /* Adjust height to accommodate two lines */
-}
-
-.form button {
-  width: 100%;
-  padding: 30px;
-  background-color: teal;
-  color: var(--text);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.successMessage {
-  background-color: #4CAF50;
-  color: white;
   padding: 15px;
-  margin-bottom: 20px;
   border-radius: 5px;
+  margin-bottom: 20px;
   text-align: center;
   font-weight: bold;
   animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
@@ -152,7 +97,7 @@
 }
 
 /* Enhanced styles for select */
-.form select {
+.divInput select {
   appearance: none; /* Removes default browser styling */
   -webkit-appearance: none; /* Ensures cross-browser compatibility */
   background-image: url('data:image/svg+xml;charset=US-ASCII,<svg%20xmlns="http://www.w3.org/2000/svg"%20viewBox="0%200%204%205"><path%20fill="none"%20stroke="%232e374a"%20stroke-width="1"%20d="M2%200L0%202h4zm0%205L0%203h4z"/></svg>');
@@ -161,4 +106,3 @@
   background-size: 12px 12px;
   padding-right: 40px; /* Adds space for the custom dropdown arrow */
 }
-
