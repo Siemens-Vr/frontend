@@ -5,7 +5,7 @@ import Pagination from "../../../student/ui/dashboard/pagination/pagination";
 import Search from "../../../student/ui/dashboard/search/search";
 import styles from "../../../student/ui/dashboard/students/students.module.css";
 import Link from "next/link";
-import UpdateSupplierPopup from '../suppliers/update/page'; // Adjust path as necessary
+import UpdateSupplierPopup from '../suppliers/update/page';
 
 const StudentsPage = () => {
   const [suppliers, setSuppliers] = useState([]);
@@ -71,7 +71,7 @@ const StudentsPage = () => {
         if (response.ok) {
           const data = await response.json();
           setSuppliers(data || []);
-          setCount(data.length || 0); // Set count based on length of data
+          setCount(data.length || 0);
         } else {
           console.error('Error fetching suppliers:', await response.text());
         }
@@ -105,13 +105,13 @@ const StudentsPage = () => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ search: searchQuery }), // Ensure to use the current search query
+            body: JSON.stringify({ search: searchQuery }),
           });
 
           if (updatedSuppliersResponse.ok) {
             const updatedSuppliers = await updatedSuppliersResponse.json();
-            setSuppliers(updatedSuppliers || []); // Update supplier list in the UI
-            setCount(updatedSuppliers.length || 0); // Update count
+            setSuppliers(updatedSuppliers || []);
+            setCount(updatedSuppliers.length || 0);
           } else {
             console.error('Error fetching updated suppliers:', await updatedSuppliersResponse.text());
           }
@@ -170,7 +170,7 @@ const StudentsPage = () => {
                         </button>
                         <button
                             className={`${styles.button} ${styles.delete}`}
-                            onClick={() => handleDelete(supplier.uuid)}  // Updated to pass supplier ID
+                            onClick={() => handleDelete(supplier.uuid)}
                         >
                           Delete
                         </button>
@@ -189,7 +189,7 @@ const StudentsPage = () => {
             <UpdateSupplierPopup
                 supplier={selectedSupplier}
                 onClose={handleClosePopup}
-                onSave={handleSavePopup}  // Pass fetchSuppliers function
+                onSave={handleSavePopup}
             />
         )}
       </div>

@@ -12,14 +12,14 @@
 }
 
 .popup {
-    background: var(--bg); /* Inherits --bg color */
+    background: var(--bg);
     padding: 20px;
     border-radius: 5px;
     width: 90%;
     max-width: 600px;
     max-height: 80%;
-    overflow-y: auto; /* Allows scrolling if content overflows */
-    color: var(--text); /* Inherits --text color */
+    overflow-y: auto;
+    color: var(--text);
 }
 
 .inputGroup {
@@ -30,17 +30,17 @@
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color: var(--textSoft); /* Inherits --textSoft color */
+    color: var(--textSoft);
 }
 
 .inputGroup input,
 .inputGroup select {
     width: 100%;
     padding: 10px;
-    border: 1px solid var(--textSoft); /* Inherits --textSoft color for the border */
+    border: 1px solid var(--textSoft);
     border-radius: 5px;
-    background: var(--bgSoft); /* Inherits --bgSoft background */
-    color: var(--text); /* Inherits --text color */
+    background: var(--bgSoft);
+    color: var(--text); 
 }
 
 .buttonGroup {

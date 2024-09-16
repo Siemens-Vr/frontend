@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import styles from "../../../../student/ui/dashboard/students/addStudent/addStudent.module.css"; // Adjust path if necessary
+import styles from "../../../../student/ui/dashboard/students/addStudent/addStudent.module.css";
 import { config } from "/config";
 
 const SuppliersAddPage = () => {

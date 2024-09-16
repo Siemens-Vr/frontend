@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import styles from '../../../ui/dashboard/supplier/UpdateSupplierPopup.module.css'; // Adjust path as necessary
+import styles from '../../../ui/dashboard/supplier/UpdateSupplierPopup.module.css';
 
 const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
     const [formData, setFormData] = useState({
