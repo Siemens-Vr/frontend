@@ -16,7 +16,8 @@ const StudentsPage = () => {
   const [students, setStudents] = useState([]);
   const [count, setCount] = useState(0);
 
-  const [showPopup, setShowPopup] = useState(false);
+  // const [showPopup, setShowPopup] = useState(false);
+  const [popupStudentId, setPopupStudentId] = useState(null);
   const [levels, setLevels] = useState([]);
 
   const searchParams = useSearchParams();
@@ -101,42 +102,42 @@ const StudentsPage = () => {
   // console.log(levels)
 
 
-  // const handleDeleteStudent = async (uuid, fullName) => {
-  //   const result = await Swal.fire({
-  //     title: 'Are you sure?',
-  //     text: `You are about to delete ${fullName}`,
-  //     icon: 'warning',
-  //     showCancelButton: true,
-  //     confirmButtonColor: '#d33',
-  //     cancelButtonColor: '#3085d6',
-  //     confirmButtonText: 'Yes, delete',
-  //     cancelButtonText: 'Cancel'
-  //   });
+  const handleDeleteStudent = async (uuid, fullName) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `You are about to delete ${fullName}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete',
+      cancelButtonText: 'Cancel'
+    });
     
-  //   if (result.isConfirmed) {
-  //     try {
-  //       const response = await fetch(`${config.baseURL}/students/${uuid}/delete`, {
-  //         method: 'DELETE',
-  //       });
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(`${config.baseURL}/students/${uuid}/delete`, {
+          method: 'GET',
+        });
 
-  //       if (response.ok) {
-  //         setStudents(students.filter((student) => student.uuid !== uuid));
-  //         Swal.fire({
-  //           title: 'Deleted!',
-  //           text: `${fullName} has been successfully deleted.`,
-  //           icon: 'success',
-  //           confirmButtonColor: '#3085d6',
-  //         });
-  //       } else {
-  //         const errorData = await response.json();
-  //         showErrorAlert(errorData.error || 'Failed to delete student.');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error deleting student:', error);
-  //       showErrorAlert('An error occurred while trying to delete the student.');
-  //     }
-  //   }
-  // };
+        if (response.ok) {
+          setStudents(students.filter((student) => student.uuid !== uuid));
+          Swal.fire({
+            title: 'Deleted!',
+            text: `${fullName} has been successfully deleted.`,
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+          });
+        } else {
+          const errorData = await response.json();
+          showErrorAlert(errorData.error || 'Failed to delete student.');
+        }
+      } catch (error) {
+        console.error('Error deleting student:', error);
+        showErrorAlert('An error occurred while trying to delete the student.');
+      }
+    }
+  };
 
   const handleDownloadPDF = async () => {
     const allStudents = await fetchAllStudents();
@@ -194,16 +195,14 @@ const StudentsPage = () => {
                           View
                         </button>
                       </Link>
+                      <button onClick={() => setPopupStudentId(student.uuid)}>Add Level</button>
 
-                      <button onClick={() => setShowPopup(true)}>Add Level</button>
-
-                        {showPopup && (
-                          <AddLevelPopup
-                            studentId = {student.uuid}
-                            onClose={() => setShowPopup(false)}
-                            // onSubmit={handleAddLevel}
-                          />
-                        )}
+                      {popupStudentId === student.uuid && (
+                        <AddLevelPopup
+                          studentId={student.uuid}
+                          onClose={() => setPopupStudentId(null)}
+                        />
+                      )}
                                             
                       {/* <button
                         className={`${styles.button} ${styles.delete}`}
@@ -211,12 +210,12 @@ const StudentsPage = () => {
                       >
                         update level
                       </button> */}
-                      {/* <button
+                      <button
                         className={`${styles.button} ${styles.delete}`}
                         onClick={() => handleDeleteStudent(student.uuid, fullName)}
                       >
                         Delete
-                      </button> */}
+                      </button>
 
                       
                     </div>

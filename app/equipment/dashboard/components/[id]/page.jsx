@@ -23,7 +23,7 @@ const SingleComponentPage = () => {
     const fetchData = async () => {
       try {
         const url = `${config.baseURL}/components/components/${componentsType}${q ? `?q=${q}` : ''}`;
-        console.log('Fetching URL:', url);
+        // console.log('Fetching URL:', url);
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
@@ -58,7 +58,7 @@ const SingleComponentPage = () => {
     e.preventDefault();
     try {
       const response = await fetch(`${config.baseURL}/components/${selectedComponent.uuid}/update-quantity`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },

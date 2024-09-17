@@ -17,7 +17,7 @@ const Page = () => {
 
   const handleCreateCategory = (category) => {
     // Handle the creation of a new category
-    console.log("New Category Created:", category);
+    // console.log("New Category Created:", category);
     setShowPopup(false);
   };
 

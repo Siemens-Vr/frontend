@@ -48,11 +48,13 @@ const AddLevelPopup = ({ studentId, onClose }) => {
     e.preventDefault();
     if (levelId) {
       try {
+        console.log( studentId, levelId )
         const response = await fetch(`${config.baseURL}/students/addLevel`, {
           method: 'POST',
           headers: {
             "Content-Type": "application/json"
           },
+        
           body: JSON.stringify({ studentId, levelId })
         });
         if (!response.ok) throw new Error("Failed to add level");

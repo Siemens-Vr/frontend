@@ -11,6 +11,7 @@ import { AddUpdateHoursPopup, ViewHoursPopup } from '../../../../../ui/dashboard
 import { config } from '/config';
 import { pdf } from '@react-pdf/renderer';
 import LevelDetailsPDF from '../../../../../ui/dashboard/cohorts/components/LevelDetailsPDF'; 
+import { useParams } from 'next/navigation';
 
 
 const LevelDetails = ({ searchParams }) => {
@@ -24,13 +25,20 @@ const LevelDetails = ({ searchParams }) => {
   const [popupType, setPopupType] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
+  const params = useParams();
+  // console.log(params)
+
   useEffect(() => {
-    const levelDataFromStorage = localStorage.getItem('levelData');
-    if (levelDataFromStorage) {
-      setLevelData(JSON.parse(levelDataFromStorage));
-    }
+    fetchData(); 
   }, []);
 
+  const fetchData  = async (req, res)=>{
+    const response = await fetch(`${config.baseURL}/levels/${params.id}/levels/${params.uuid}`)
+    const data = await response.json();
+    console.log(data)
+    setLevelData(data)
+  }
+  
   useEffect(() => {
     const fetchFacilitators = async () => {
       try {

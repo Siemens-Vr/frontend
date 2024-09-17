@@ -28,6 +28,7 @@ const FacilitatorsPage = () => {
     fetchFacilitators();
   }, [q]);
 
+  // console.log(facilitators)
   const showErrorAlert = (message) => {
     Swal.fire({
       icon: 'error',

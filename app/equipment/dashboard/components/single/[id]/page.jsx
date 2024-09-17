@@ -34,7 +34,7 @@ const EditComponent = () => {
   const handleComponentUpdate = async (updatedData) => {
     try {
       const response = await fetch(`${config.baseURL}/components/${id}/update`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },

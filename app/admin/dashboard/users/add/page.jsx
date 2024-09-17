@@ -14,8 +14,6 @@ const AddUsersPage = () => {
               name="username"
               required
             />
-
-          
             <input
               type="email"
               placeholder="Email"

@@ -7,7 +7,7 @@ import Search from "../../ui/dashboard/search/search";
 const UsersPage = async () => {
     const data = await fetchUsers();
     const users = data.users;
-    // console.log(users);
+    console.log(users);
 
     return (
         <div className={styles.container}>
@@ -34,7 +34,7 @@ const UsersPage = async () => {
                             <td>{user.username}</td>
                             <td>{user.email}</td>
                             <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                            <td>{user.isAdmin ? 'Admin' : 'User'}</td>
+                            <td>{user.role.toUpperCase()}</td>
                             <td>{user.isActive ? 'Active' : 'Inactive'}</td>
                             <td>
                                 <div className={styles.buttons}>

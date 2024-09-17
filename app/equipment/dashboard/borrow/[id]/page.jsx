@@ -105,7 +105,7 @@ const SinglePage = () => {
 
     try {
       const response = await fetch(`${config.baseURL}/borrow/${uuid}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },

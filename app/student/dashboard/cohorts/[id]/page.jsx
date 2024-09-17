@@ -51,21 +51,16 @@ const ViewCohort = () => {
       if (id) { 
         const response = await fetch(`${config.baseURL}/cohorts/${id}`);
         const data = await response.json();
+        // console.log(data)
         setCohortsData(data);
       }
     } catch (error) {
       console.error("Error fetching cohort data:", error);
     }
   };
-  
 
-// Storing data before navigation
-const handleViewLevel = (level) => {
-  localStorage.setItem('levelData', JSON.stringify(level));
- // Log the stored data
-//  console.log( localStorage.getItem('levelData'));
-  router.push(`/student/dashboard/cohorts/${cohortsData.cohorts.uuid}/levels/${level.uuid}`);
-};
+  // console.log(cohortsData)
+
 
   const handleDownloadPDF = async () => {
     if (cohortsData) {
@@ -81,9 +76,9 @@ const handleViewLevel = (level) => {
     return <p>Loading...</p>;
   }
 
-  if (!cohortsData.cohorts) {
-    return <p>Error: Cohort data is unavailable.</p>;
-  }
+  // if (!cohortsData.cohorts) {
+  //   return <p>Error: Cohort data is unavailable.</p>;
+  // }
 
   return (
     <div className={styles.container}>
@@ -106,16 +101,15 @@ const handleViewLevel = (level) => {
       </div>
       <div className={styles.levelsContainer}>
         {cohortsData.levels.map((level) => (
-          <div className={styles.card} key={level.id}>
+          <div className={styles.card} key={level.uuid}>
             <h2 className={styles.levelName}>{level.levelName}</h2>
             <p className={styles.levelDetails}> Number of Students: {level.students ? level.students.length : 0}</p>
             <p className={styles.levelDetails}> Number of Facilitators: {level.facilitators ? level.facilitators.length : 0}</p>
             <div className={styles.cardFooter}>
-              {/* <Link href={{ pathname: `/dashboard/cohorts/levels/${level.uuid}`, query: { levelData: level } }}> */}
-              <button onClick={() => handleViewLevel(level)} className={`${styles.button} ${styles.view}`}>
-                View More
-              </button>
-              {/* </Link> */}
+            <Link className={`${styles.button} ${styles.view}`} href={`/student/dashboard/cohorts/${cohortsData.cohorts.uuid}/levels/${level.uuid}`}>
+              View More
+            </Link>
+         
             </div>
           </div>
         ))}

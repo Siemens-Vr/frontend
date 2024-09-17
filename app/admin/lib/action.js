@@ -5,17 +5,14 @@ import { User } from "./models";
 import { connectToDB } from "./utils";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
-import { signIn } from "../auth";
+import { signIn } from "../../auth";
 
 export const addUser = async (formData) => {
   const { username, email, password, phone, role, isAdmin, isActive } =
     Object.fromEntries(formData);
 
   try {
-    if(!connectToDB()){
-      console.log("not connected")
-    }
-    
+    connectToDB();
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -31,6 +28,7 @@ export const addUser = async (formData) => {
       isAdmin,
       isActive,
     });
+    // console.log(newUser);
 
     await newUser.save();
   } catch (err) {
@@ -70,8 +68,8 @@ export const updateUser = async (formData) => {
     throw new Error("Failed to update user!");
   }
 
-  revalidatePath("/admin/dashboard/users");
-  redirect("/admin/dashboard/users");
+  revalidatePath("/dashboard/users");
+  redirect("/dashboard/users");
 };
 
 
