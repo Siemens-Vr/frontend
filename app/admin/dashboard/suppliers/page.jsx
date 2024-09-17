@@ -7,6 +7,8 @@ import styles from "../../../student/ui/dashboard/students/students.module.css";
 import Link from "next/link";
 import UpdateSupplierPopup from '../suppliers/update/page';
 
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const StudentsPage = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [count, setCount] = useState(0);
@@ -17,7 +19,7 @@ const StudentsPage = () => {
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const response = await fetch('https://backend-1-gene.onrender.com/supplier/search', {
+        const response = await fetch(`${BACKEND_URL}supplier/search`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -40,7 +40,7 @@
     border: 1px solid var(--textSoft);
     border-radius: 5px;
     background: var(--bgSoft);
-    color: var(--text); 
+    color: var(--text);
 }
 
 .buttonGroup {

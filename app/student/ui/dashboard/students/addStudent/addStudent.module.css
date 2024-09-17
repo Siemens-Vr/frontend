@@ -14,7 +14,7 @@
 .divInput {
   display: flex;
   flex-direction: column;
-  flex-basis: calc(50% - 20px); /* Adjusted to increase width */
+  flex-basis: calc(50% - 20px);
   margin-bottom: 20px;
 }
 
@@ -87,7 +87,7 @@
   to { opacity: 0; }
 }
 
-/* New styles for labels */
+
 .label {
   width: 100%;
   font-weight: bold;
@@ -96,13 +96,24 @@
   display: block;
 }
 
-/* Enhanced styles for select */
+
 .divInput select {
-  appearance: none; /* Removes default browser styling */
-  -webkit-appearance: none; /* Ensures cross-browser compatibility */
+  appearance: none;
+  -webkit-appearance: none;
   background-image: url('data:image/svg+xml;charset=US-ASCII,<svg%20xmlns="http://www.w3.org/2000/svg"%20viewBox="0%200%204%205"><path%20fill="none"%20stroke="%232e374a"%20stroke-width="1"%20d="M2%200L0%202h4zm0%205L0%203h4z"/></svg>');
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 12px 12px;
-  padding-right: 40px; /* Adds space for the custom dropdown arrow */
+  padding-right: 40px;
+}
+
+.divInput textarea {
+  width: 100%;
+  height: 100px;
+  padding: 15px;
+  background-color: var(--bg);
+  color: var(--text);
+  border: 2px solid #2e374a;
+  border-radius: 5px;
+  font-size: 16px;
 }

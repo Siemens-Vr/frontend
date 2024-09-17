@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import styles from '../../../ui/dashboard/supplier/UpdateSupplierPopup.module.css';
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
     const [formData, setFormData] = useState({
         suppliers: '',
@@ -40,7 +41,7 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`https://backend-1-gene.onrender.com/supplier/${supplier.uuid}/update`, {
+            const response = await fetch(`${BACKEND_URL}supplier/${supplier.uuid}/update`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

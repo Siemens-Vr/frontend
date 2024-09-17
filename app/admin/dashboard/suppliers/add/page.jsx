@@ -3,6 +3,8 @@ import { useState } from "react";
 import styles from "../../../../student/ui/dashboard/students/addStudent/addStudent.module.css";
 import { config } from "/config";
 
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const SuppliersAddPage = () => {
     const [formData, setFormData] = useState({
         suppliers: "",
@@ -45,7 +47,7 @@ const SuppliersAddPage = () => {
         console.log("Submitting formatted form data:", formattedData);
 
         try {
-            const response = await fetch("https://backend-1-gene.onrender.com/supplier", {
+            const response = await fetch(`${BACKEND_URL}supplier`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -182,7 +184,7 @@ const SuppliersAddPage = () => {
                 </div>
                 <div className={styles.divInput}>
                     <label htmlFor="itemDescription" className={styles.label}>Item Description</label>
-                    <input
+                    <textarea
                         type="text"
                         placeholder="Item Description"
                         name="itemDescription"
@@ -190,6 +192,7 @@ const SuppliersAddPage = () => {
                         onChange={handleChange}
                         required
                     />
+
                 </div>
                 <div className={styles.divInput}>
                     <label htmlFor="amountClaimed" className={styles.label}>Amount Claimed</label>
@@ -204,14 +207,18 @@ const SuppliersAddPage = () => {
                 </div>
                 <div className={styles.divInput}>
                     <label htmlFor="approver" className={styles.label}>Approver</label>
-                    <input
-                        type="text"
-                        placeholder="Approver"
+                    <select
                         name="approver"
                         value={formData.approver}
                         onChange={handleChange}
                         required
-                    />
+                        className={styles.select}
+                    >
+                        <option value="">Select Approver</option>
+                        <option value="VC">VC</option>
+                        <option value="DVC">DVC</option>
+
+                    </select>
                 </div>
                 <div className={styles.divInput}>
                     <label htmlFor="dateTakenToApprover" className={styles.label}>Date Taken To Approver</label>
@@ -224,7 +231,7 @@ const SuppliersAddPage = () => {
                     />
                 </div>
                 <div className={styles.divInput}>
-                    <label htmlFor="dateTakenToFinance" className={styles.label}>Date Taken To Finance</label>
+                <label htmlFor="dateTakenToFinance" className={styles.label}>Date Taken To Finance</label>
                     <input
                         type="datetime-local"
                         name="dateTakenToFinance"
