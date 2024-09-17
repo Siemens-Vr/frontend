@@ -5,7 +5,7 @@ import Pagination from "../../../student/ui/dashboard/pagination/pagination";
 import Search from "../../../student/ui/dashboard/search/search";
 import styles from "../../../student/ui/dashboard/students/students.module.css";
 import Link from "next/link";
-import UpdateSupplierPopup from '../suppliers/update/page';
+import UpdateSupplierPopup from '../suppliers/update/update';
 import { config } from "/config";
 
 const StudentsPage = () => {

@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect } from 'react';
 import styles from '../../../ui/dashboard/supplier/UpdateSupplierPopup.module.css';
 import { config } from "/config";

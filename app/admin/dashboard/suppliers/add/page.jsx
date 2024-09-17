@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
-import styles from "../../../../student/ui/dashboard/students/addStudent/addStudent.module.css";
+import styles from "../../../ui/dashboard/supplier/addSupplier.module.css";
 import { config } from "/config";
+
 
 const SuppliersAddPage = () => {
     const [formData, setFormData] = useState({
@@ -42,7 +43,7 @@ const SuppliersAddPage = () => {
             dateAccounted: formData.dateAccounted ? new Date(formData.dateAccounted).toISOString() : null,
         };
 
-        console.log("Submitting formatted form data:", formattedData);
+        // console.log("Submitting formatted form data:", formattedData);
 
         try {
             const response = await fetch(`${config.baseURL}/supplier`, {
@@ -170,27 +171,17 @@ const SuppliersAddPage = () => {
             {successMessage && <p className={styles.successMessage}>{successMessage}</p>}
             <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.divInput}>
-                    <label htmlFor="suppliers" className={styles.label}>Supplier</label>
+                    <label htmlFor="suppliers" className={styles.label}>Suppliers</label>
                     <input
                         type="text"
-                        placeholder="Supplier"
+                        placeholder="Suppliers"
                         name="suppliers"
                         value={formData.suppliers}
                         onChange={handleChange}
                         required
                     />
                 </div>
-                <div className={styles.divInput}>
-                    <label htmlFor="itemDescription" className={styles.label}>Item Description</label>
-                    <input
-                        type="text"
-                        placeholder="Item Description"
-                        name="itemDescription"
-                        value={formData.itemDescription}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+           
                 <div className={styles.divInput}>
                     <label htmlFor="amountClaimed" className={styles.label}>Amount Claimed</label>
                     <input
@@ -202,16 +193,32 @@ const SuppliersAddPage = () => {
                         required
                     />
                 </div>
+                <div className={`${styles.divInput} ${styles.fullWidth}`}>
+                    <label htmlFor="itemDescription" className={styles.label}>Item Description</label>
+                    <textarea
+                        type="text"
+                        placeholder="Item Description"
+                        name="itemDescription"
+                        value={formData.itemDescription}
+                        onChange={handleChange}
+                        required
+                    />
+
+                </div>
                 <div className={styles.divInput}>
                     <label htmlFor="approver" className={styles.label}>Approver</label>
-                    <input
-                        type="text"
-                        placeholder="Approver"
+                    <select
                         name="approver"
                         value={formData.approver}
                         onChange={handleChange}
                         required
-                    />
+                        className={styles.select}
+                    >
+                        <option value="">Select Approver</option>
+                        <option value="VC">VC</option>
+                        <option value="DVC">DVC</option>
+
+                    </select>
                 </div>
                 <div className={styles.divInput}>
                     <label htmlFor="dateTakenToApprover" className={styles.label}>Date Taken To Approver</label>
@@ -224,7 +231,7 @@ const SuppliersAddPage = () => {
                     />
                 </div>
                 <div className={styles.divInput}>
-                    <label htmlFor="dateTakenToFinance" className={styles.label}>Date Taken To Finance</label>
+                <label htmlFor="dateTakenToFinance" className={styles.label}>Date Taken To Finance</label>
                     <input
                         type="datetime-local"
                         name="dateTakenToFinance"
