@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Pagination from "../cohorts/pagination/pagination"
+
 // import Pagination from "../student/ui/dashboard/cohorts/pagination/pagination";
 import styles from "./transactions.module.css";
 import { config } from "/config"; 

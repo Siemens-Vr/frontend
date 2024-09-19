@@ -17,29 +17,37 @@ const menuItems = [
     list: [
      
       {
-        title: "Attendance & Leave Management",
-        path: "/staff/dashboard/attendance&leave",
+        title: "Attendance",
+        path: "/staff/dashboard/attendance",
+        icon: <MdSupervisedUserCircle />,
+      },{
+        title: "Leave Management",
+        path: "/staff/dashboard/leave",
         icon: <MdSupervisedUserCircle />,
       },
-      {
-        title: "Payroll & Benefits",
-        path: "/staff/dashboard/payroll&benefits",
-        icon: <MdPeople />,
-      },
-      {
-        title: "Training & Development",
-        path: "/staff/dashboard/training&development",
-        icon: <MdPeople />,
-      },
+      // {
+      //   title: "Payroll & Benefits",
+      //   path: "/staff/dashboard/payroll&benefits",
+      //   icon: <MdPeople />,
+      // },
+      // {
+      //   title: "Training & Development",
+      //   path: "/staff/dashboard/training&development",
+      //   icon: <MdPeople />,
+      // },
       {
         title: "Task & Performance",
         path: "/staff/dashboard/task&performance",
+        icon: <MdPeople />,
+      },{
+        title: "Notifications",
+        path: "/staff/dashboard/notifications",
         icon: <MdPeople />,
       },
 
       {
         title: "Support & Collaboration",
-        path: "/staff/dashboard/support&collaboration",
+        path: "/staff/dashboard/support",
         icon: <MdPeople />,
       },
       {

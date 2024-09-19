@@ -4,7 +4,6 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import styles from "@/app/ui/dashboard/students/singleStudent/singleStudent.module.css";
-import { config } from '@/config';
 
 const AddInstructorsPopup = ({ level, facilitators, onClose, onAddFacilitator }) => {
   const [selectedFacilitator, setSelectedFacilitator] = useState(null);

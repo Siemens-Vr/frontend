@@ -2,7 +2,6 @@
 import styles from "../../../ui/dashboard/students/singleStudent/sStudent.module.css";
 import { useState, useEffect } from "react";
 import { config } from "/config";
-import Image from "next/image";
 
 const SinstudentPage = ({ params }) => {
   const [student, setStudent] = useState(null);

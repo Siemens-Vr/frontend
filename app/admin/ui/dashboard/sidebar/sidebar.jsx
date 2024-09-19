@@ -21,7 +21,12 @@ const menuItems = [
         path: "/admin/dashboard",
         icon: <MdDashboard />,
       },
-     
+      {
+        title: "Projects",
+        path: "/admin/dashboard/projects",
+        icon: <MdDashboard />,
+      },
+
       {
         title: "Staff",
         path: "/admin/dashboard/staff",

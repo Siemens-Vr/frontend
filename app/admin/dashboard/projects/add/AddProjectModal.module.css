@@ -1,0 +1,176 @@
+/* AddProjectModal.module.css */
+
+/* Modal backdrop */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent dark background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal content */
+.modalContent {
+    background-color: var(--bgSoft); /* Use the background color variable you defined earlier */
+    padding: 20px;
+    border-radius: 8px;
+    width: 600px; /* Increased width for two items per line */
+    max-width: 90%;
+    max-height: 80vh; /* Limit the height of the modal content */
+    color: var(--text); /* Use the text color variable you defined earlier */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease;
+    overflow-y: auto; /* Allow vertical scrolling */
+}
+
+/* Modal heading */
+.modalContent h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+/* Form container to handle two items per line */
+.formContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Space between items */
+}
+
+/* Form labels and inputs */
+.modalContent label,
+.modalContent input,
+.modalContent select {
+    flex: 1 1 45%; /* Adjust width to fit two items per line */
+    box-sizing: border-box;
+}
+
+/* Form labels */
+.modalContent label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text);
+}
+
+/* Form inputs */
+.modalContent input,
+.modalContent select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #000;
+    background-color: #fff;
+}
+
+/* Buttons container for phase actions */
+.phaseButtonContainer {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Space between the buttons */
+    margin-top: 20px; /* Space above the buttons */
+}
+
+/* Add Phase button */
+.addPhaseButton,
+.removePhaseButton {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    color: white;
+}
+
+/* Add Phase button specific styles */
+.addPhaseButton {
+    background-color: #28a745; /* Green for add button */
+}
+
+/* Remove Phase button specific styles */
+.removePhaseButton {
+    background-color: #dc3545; /* Red for remove button */
+}
+
+/* Buttons */
+.modalContent button {
+    padding: 10px 15px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Add project button */
+.modalContent button:first-of-type {
+    background-color: #28a745; /* Green for the add button */
+    color: white;
+}
+
+/* Cancel button */
+.closeButton {
+    background-color: #dc3545; /* Red for cancel button */
+    color: white;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* AddProjectModal.module.css */
+.phaseContainer,
+.assigneeContainer {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.removeButton {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.addPhaseButton,
+.addAssigneeButton {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.phaseButtonContainer,
+.assigneeButtonContainer {
+    margin-bottom: 20px;
+}
+
+.descriptionContainer,
+.assigneeContainer {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.addButtonIcon {
+    font-size: 20px;
+}

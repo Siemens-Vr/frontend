@@ -1,0 +1,81 @@
+.cardContainer {
+    width: 300px;
+    height: 120px; /* Make the container square */
+    border: 1px solid #1e90ff; /* Highlight color for border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Increased shadow for better depth */
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #182237; /* Background color for the card */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Center content vertically */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.cardContainer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+}
+
+.projectName {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    color: white; /* Text color for the project name */
+    font-size: 1.5rem;
+    font-weight: bold;
+    background-color: #121a22; /* Background color for the project name section */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.statusCircle {
+    width: 12px; /* Smaller circle size */
+    height: 12px;
+    border-radius: 50%;
+    background-color: transparent; /* Default background color */
+    position: absolute;
+    right: 1rem; /* Position circle at the end of the name */
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.6); /* Default glow */
+}
+
+.active .statusCircle {
+    background-color: #28a745; /* Green color for the active circle */
+}
+
+.rejected .statusCircle {
+    background-color: #dc3545; /* Red color for the rejected circle */
+}
+
+.cardFooter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: #151c2c; /* Darker background for the footer */
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.footerText {
+    color: #b7bac1; /* Lighter text color */
+    font-size: 1rem;
+    margin: 0.25rem 0; /* Spacing between lines of text */
+    text-align: center;
+}
+
+.dates {
+    font-size: 0.875rem; /* Smaller font size for dates */
+    color: #b7bac1; /* Lighter color for dates */
+    margin: 0.25rem 0; /* Spacing between date elements */
+}
+

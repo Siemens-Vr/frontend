@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
 import styles from "../viewCohort/viewLevel.module.css";
 import { config } from '/config';
 
@@ -7,7 +6,7 @@ const LevelAddPopUp = ({ cohortId, onClose, onAdd }) => {
   const [facilitators, setFacilitators] = useState([]);
   const [selectedFacilitator, setSelectedFacilitator] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
-  const [facilitatorRoles, setFacilitatorRoles] = useState([]);
+
   
   const [levelData, setLevelData] = useState({
     levelName: '',

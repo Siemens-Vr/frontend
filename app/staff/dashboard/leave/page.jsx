@@ -3,11 +3,7 @@
 import React, { useState } from 'react';
 import styles from '../../../../app/staff/ui/attendance&leave/attendanceLeave.module.css';
 
-const AttendanceLeave = () => {
-    const [attendanceRecords, setAttendanceRecords] = useState([
-        { id: 1, name: 'John Doe', present: false, arrivalTime: '' },
-        { id: 2, name: 'Jane Smith', present: false, arrivalTime: '' },
-    ]);
+const Leave = () => {
 
     const [leaveForm, setLeaveForm] = useState({
         employeeNumber: '',
@@ -16,33 +12,6 @@ const AttendanceLeave = () => {
         reason: ''
     });
 
-    const handleCheckboxChange = (id) => {
-        setAttendanceRecords(records =>
-            records.map(record =>
-                record.id === id
-                    ? { ...record, present: !record.present }
-                    : record
-            )
-        );
-    };
-
-    const handleTimeChange = (id, time) => {
-        setAttendanceRecords(records =>
-            records.map(record =>
-                record.id === id
-                    ? { ...record, arrivalTime: time }
-                    : record
-            )
-        );
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setLeaveForm(prevForm => ({
-            ...prevForm,
-            [name]: value
-        }));
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -57,46 +26,20 @@ const AttendanceLeave = () => {
         });
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setLeaveForm(prevForm => ({
+            ...prevForm,
+            [name]: value
+        }));
+    };
+
+
     return (
         <div className={styles.container}>
             <div className={styles.section}>
-                <h2 className={styles.subHeading}>Attendance Records</h2>
-                <table className={styles.table}>
-                    <thead>
-                    <tr>
-                        <th className={styles.tableHead}>Name</th>
-                        <th className={styles.tableHead}>Present</th>
-                        <th className={styles.tableHead}>Arrival Time</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {attendanceRecords.map(record => (
-                        <tr key={record.id} className={styles.tableRow}>
-                            <td className={styles.tableData}>{record.name}</td>
-                            <td className={styles.tableData}>
-                                <input
-                                    type="checkbox"
-                                    checked={record.present}
-                                    onChange={() => handleCheckboxChange(record.id)}
-                                />
-                            </td>
-                            <td className={styles.tableData}>
-                                {record.present && (
-                                    <input
-                                        type="time"
-                                        value={record.arrivalTime}
-                                        onChange={(e) => handleTimeChange(record.id, e.target.value)}
-                                        className={styles.input}
-                                    />
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
+                <h2 className={styles.subHeading}>Leave Status</h2>
 
-            <div className={styles.section}>
                 <h2 className={styles.subHeading}>Leave Request</h2>
                 <form onSubmit={handleSubmit} className={styles.leaveForm}>
                     <div className={styles.formGroupRow}>
@@ -151,4 +94,4 @@ const AttendanceLeave = () => {
     );
 };
 
-export default AttendanceLeave;
+export default Leave;

@@ -4,12 +4,8 @@ import MenuLink from "./menuLink/menuLink";
 import styles from "./sidebar.module.css";
 import {
   MdDashboard,
-  MdSupervisedUserCircle,
-
   MdAnalytics,
   MdPeople,
-  MdOutlineSettings,
-  MdHelpCenter,
   MdLogout,
 } from "react-icons/md";
 import { auth, signOut } from "/app/auth";

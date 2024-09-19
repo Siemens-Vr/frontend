@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import styles from '../../../ui/dashboard/supplier/UpdateSupplierPopup.module.css';
 
