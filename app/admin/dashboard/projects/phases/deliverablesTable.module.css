@@ -1,0 +1,34 @@
+.container {
+    padding: 20px;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab, .activeTab {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.activeTab {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.budgetSummary {
+    margin-top: 20px;
+}

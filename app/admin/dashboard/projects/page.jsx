@@ -1,75 +1,171 @@
-// projects/page.jsx
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProjectCard from '../../ui/dashboard/projects/page';
 import styles from './projects.module.css';
-import AddProjectModal from '../projects/add/page';
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function Projects() {
-    const [availableProjects, setAvailableProjects] = useState([
-        {
-            projectName: "SIFA",
-            status: "active",
-            startDate: "2024-08-01",
-            endDate: "2024-10-01",
-            comments: "Initial setup",
-            deliverables: "Phase 1 deliverables",
-            phases: "Phase 1, Phase 2",
-            budget: "10000",
-            funding: "5000",
-            description: "Project SIFA involves initial setup and phase planning.",
-            assignees: ["John Doe", "Jane Smith"]
-        },
-    ]);
+const Dashboard = () => {
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const { replace } = useRouter();
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // State for search term and filter
+    const [searchTerm, setSearchTerm] = useState(searchParams.get('query') || '');
+    const [filter, setFilter] = useState('All Projects');
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    // Handle search and update the query string in URL
+    function handleSearch(term) {
+        const params = new URLSearchParams(searchParams);
+        if (term) {
+            params.set("query", term);
+        } else {
+            params.delete("query");
+        }
+        replace(`${pathname}?${params.toString()}`);
+    }
 
-    const addProject = (newProject) => {
-        setAvailableProjects([...availableProjects, newProject]);
+    // Available projects data with updated status
+    const availableProjects = [
+        { title: 'Alpha', status: "todo", assignees: ["Kimani", "John"], startDate: "01/09/2024", endDate: "15/09/2024" },
+        { title: "Beta", status: "active", assignees: ['Jake', 'Sara'], startDate: "01/08/2024", endDate: "30/09/2024" },
+        { title: "Gamma", status: "completed", assignees: ['Alice', 'Bob'], startDate: "01/07/2024", endDate: "01/09/2024" }
+    ];
+
+    // Breadcrumb for navigation
+    const breadcrumb = [
+        { label: 'Dashboard', link: '' },
+        { label: 'Projects', link: '/admin/dashboard/projects' },
+    ];
+
+    // Filter projects based on search term and selected filter (status)
+    const filteredProjects = availableProjects.filter(project => {
+        const search = searchTerm.toLowerCase();
+        const matchStatus = filter === 'All Projects' || project.status.toLowerCase() === filter.toLowerCase();
+        const matchSearch = project.title.toLowerCase().includes(search) ||
+            project.assignees.some(assignee => assignee.toLowerCase().includes(search));
+
+        return matchStatus && matchSearch;
+    });
+
+    // Update the search term when input changes
+    useEffect(() => {
+        if (searchTerm) {
+            handleSearch(searchTerm);
+        }
+    }, [searchTerm]);
+
+    // Group filtered projects by status
+    const groupedProjects = {
+        todo: filteredProjects.filter(project => project.status.toLowerCase() === 'todo'),
+        active: filteredProjects.filter(project => project.status.toLowerCase() === 'active'),
+        completed: filteredProjects.filter(project => project.status.toLowerCase() === 'completed')
     };
 
     return (
-        <>
-            <div className={styles.projectsContainer}>
-                <div className={styles.projectsHeader}>
-                    <h1 className={styles.projectsTitle}>Projects</h1>
-                    <button className={styles.projectsAdd} onClick={openModal}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="white" d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        ADD PROJECT
-                    </button>
-                </div>
-
-                <div className={styles.projectsCards}>
-                    {availableProjects.map((project, index) => (
-                        <ProjectCard
-                            key={index}
-                            projectName={project.projectName}
-                            status={project.status}
-                            startDate={project.startDate}
-                            endDate={project.endDate}
-                            comments={project.comments}
-                            deliverables={project.deliverables}
-                            phases={project.phases}
-                            budget={project.budget}
-                            funding={project.funding}
-                            description={project.description}
-                            assignees={project.assignees}
-                        />
-                    ))}
-                </div>
+        <div className={styles.dashboardContainer}>
+            {/* Breadcrumb */}
+            <div className={styles.breadcrumb}>
+                {breadcrumb.map((crumb, index) => (
+                    <span key={index}>
+                        <a href={crumb.link}>{crumb.label}</a>
+                        {index < breadcrumb.length - 1 && ' > '}
+                    </span>
+                ))}
             </div>
 
-            <AddProjectModal
-                isModalOpen={isModalOpen}
-                closeModal={closeModal}
-                addProject={addProject}
-            />
-        </>
+            {/* Navbar */}
+            <nav className={styles.navbar}>
+                <ul>
+                    <li><a href="/admin/dashboard">Dashboard</a></li>
+                    <li><a href="/admin/dashboard/projects">Projects</a></li>
+                    <li><a href="">Teams</a></li>
+                    <li><a href="">Settings</a></li>
+                </ul>
+            </nav>
+
+            {/* Main Content */}
+            <div className={styles.mainContent}>
+                {/* Header Section */}
+                <header className={styles.header}>
+                    <h1>Project Management Dashboard</h1>
+                    <div className={styles.controls}>
+                        {/* Search Input */}
+                        <input
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            value={searchTerm}
+                            type="text"
+                            placeholder="Search projects..."
+                            className={styles.searchInput}
+                        />
+
+                        {/* Filter Dropdown */}
+                        <select value={filter} onChange={(e) => setFilter(e.target.value)} className={styles.filterDropdown}>
+                            <option value="All Projects">All Projects</option>
+                            <option value="Todo">Todo</option>
+                            <option value="Active">Active</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                        <button className={styles.addProjectBtn}>+ Add Project</button>
+                    </div>
+                </header>
+
+                {/* Board View */}
+                <section className={styles.boardView}>
+                    {/* Todo Column */}
+                    {groupedProjects.todo.length > 0 && (
+                        <div className={styles.column}>
+                            <h2>Todo</h2>
+                            {groupedProjects.todo.map((project) => (
+                                <ProjectCard
+                                    key={project.title}
+                                    title={project.title}
+                                    status={project.status}
+                                    assignees={project.assignees}
+                                    startDate={project.startDate}
+                                    endDate={project.endDate}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Active Column */}
+                    {groupedProjects.active.length > 0 && (
+                        <div className={styles.column}>
+                            <h2>Active</h2>
+                            {groupedProjects.active.map((project) => (
+                                <ProjectCard
+                                    key={project.title}
+                                    title={project.title}
+                                    status={project.status}
+                                    assignees={project.assignees}
+                                    startDate={project.startDate}
+                                    endDate={project.endDate}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Completed Column */}
+                    {groupedProjects.completed.length > 0 && (
+                        <div className={styles.column}>
+                            <h2>Completed</h2>
+                            {groupedProjects.completed.map((project) => (
+                                <ProjectCard
+                                    key={project.title}
+                                    title={project.title}
+                                    status={project.status}
+                                    assignees={project.assignees}
+                                    startDate={project.startDate}
+                                    endDate={project.endDate}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </section>
+            </div>
+        </div>
     );
-}
+};
+
+export default Dashboard;

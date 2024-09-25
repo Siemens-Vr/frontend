@@ -1,0 +1,106 @@
+.page-container {
+    padding: 20px;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.add-new-btn, .add-btn {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    margin-right: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-new-btn:hover, .add-btn:hover {
+    background-color: #45a049;
+}
+
+.budget-container {
+    background-color: #182237;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.budget-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.budget-container th,
+.budget-container td {
+    border: 1px solid white;
+    padding: 8px;
+    text-align: left;
+}
+
+.budget-container th {
+    background-color: #4CAF50;
+}
+
+.budget-container td {
+    background-color: #222;
+}
+
+.form-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.form-container input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.form-container button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form-container button:hover {
+    background-color: #45a049;
+}
+
+
+.download-btn {
+    padding: 10px 15px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.download-btn:hover {
+    background-color: #0b7dda;
+}
+
+
+.download-btn {
+    padding: 10px 15px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.download-btn:hover {
+    background-color: #0b7dda;
+}

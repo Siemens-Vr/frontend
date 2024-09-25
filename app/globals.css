@@ -1,3 +1,8 @@
+:root {
+  --bg: #151c2c; /* Dark background */
+  --bgSoft: #182237; /* Slightly lighter background */
+  --text: #ffffff; /* White text */
+}
 
 
 
