@@ -1,176 +1,138 @@
 /* AddProjectModal.module.css */
 
-/* Modal backdrop */
-.modal {
+.modalOverlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Transparent dark background */
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    z-index: 1000; /* Ensure it's above other content */
 }
 
-/* Modal content */
 .modalContent {
-    background-color: var(--bgSoft); /* Use the background color variable you defined earlier */
-    padding: 20px;
+    background-color: #2b3e4f;
+    display: flex;
     border-radius: 8px;
-    width: 600px; /* Increased width for two items per line */
-    max-width: 90%;
-    max-height: 80vh; /* Limit the height of the modal content */
-    color: var(--text); /* Use the text color variable you defined earlier */
+    width: 80%; /* Set a fixed width */
+    max-width: 1000px; /* Maximum width */
+    height: 600px; /* Set a fixed height */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 0.3s ease;
-    overflow-y: auto; /* Allow vertical scrolling */
+    overflow: hidden; /* Hide overflow to prevent scrollbars */
 }
 
-/* Modal heading */
-.modalContent h2 {
-    margin-bottom: 15px;
-    font-size: 24px;
+.modalLeft {
+    flex: 1;
+    background-color: #17232e;
+    border-right: 1px solid #ddd;
+    padding: 20px;
 }
 
-/* Form container to handle two items per line */
-.formContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px; /* Space between items */
+.navList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-/* Form labels and inputs */
-.modalContent label,
-.modalContent input,
-.modalContent select {
-    flex: 1 1 45%; /* Adjust width to fit two items per line */
-    box-sizing: border-box;
-}
-
-/* Form labels */
-.modalContent label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: var(--text);
-}
-
-/* Form inputs */
-.modalContent input,
-.modalContent select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #000;
-    background-color: #fff;
-}
-
-/* Buttons container for phase actions */
-.phaseButtonContainer {
-    display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    gap: 10px; /* Space between the buttons */
-    margin-top: 20px; /* Space above the buttons */
-}
-
-/* Add Phase button */
-.addPhaseButton,
-.removePhaseButton {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
+.navItem {
+    padding: 15px;
     cursor: pointer;
-    color: white;
-}
-
-/* Add Phase button specific styles */
-.addPhaseButton {
-    background-color: #28a745; /* Green for add button */
-}
-
-/* Remove Phase button specific styles */
-.removePhaseButton {
-    background-color: #dc3545; /* Red for remove button */
-}
-
-/* Buttons */
-.modalContent button {
-    padding: 10px 15px;
-    margin-right: 10px;
-    border: none;
     border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-/* Add project button */
-.modalContent button:first-of-type {
-    background-color: #28a745; /* Green for the add button */
-    color: white;
-}
-
-/* Cancel button */
-.closeButton {
-    background-color: #dc3545; /* Red for cancel button */
-    color: white;
-}
-
-/* Fade-in animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* AddProjectModal.module.css */
-.phaseContainer,
-.assigneeContainer {
-    display: flex;
-    align-items: center;
     margin-bottom: 10px;
+    background-color: #2b3e4f;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.removeButton {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 5px;
-    cursor: pointer;
-    margin-left: 10px;
+.navItem:hover {
+    background-color: #50677d;
 }
 
-.addPhaseButton,
-.addAssigneeButton {
-    background-color: green;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
+.active {
+    background-color: #2563eb; /* Blue background for active step */
+    color: #1d1c1c;
 }
 
-.phaseButtonContainer,
-.assigneeButtonContainer {
+.modalRight {
+    flex: 3;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto; /* Enable scrolling for content */
+}
+
+.modalRight h2 {
     margin-bottom: 20px;
+    color: #1e293b; /* Dark text color */
 }
 
-.descriptionContainer,
-.assigneeContainer {
+.modalButtons {
     display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+    justify-content: space-between;
+    margin-top: 20px;
 }
 
-.addButtonIcon {
-    font-size: 20px;
+.modalButtons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #2563eb; /* Blue background for Next and Back */
+    color: white;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.modalButtons button:disabled {
+    background-color: #a1a1aa; /* Gray background for disabled buttons */
+    cursor: not-allowed;
+}
+
+.modalButtons button:hover:not(:disabled) {
+    background-color: #1d4ed8; /* Darker blue on hover */
+}
+
+.closeButton {
+    background-color: #f44336; /* Red background */
+    color: #301212;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    align-self: flex-end;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.closeButton:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modalContent {
+        flex-direction: column;
+        width: 90%; /* Adjust width for smaller screens */
+        height: auto; /* Adjust height for smaller screens */
+    }
+
+    .modalLeft {
+        border-right: none;
+        border-bottom: 1px solid #130606;
+    }
+
+    .modalButtons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modalButtons button {
+        width: 100%;
+    }
+
+    .closeButton {
+        width: 100%;
+    }
 }

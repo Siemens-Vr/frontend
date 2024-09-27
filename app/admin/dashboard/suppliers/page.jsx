@@ -8,6 +8,7 @@ import Link from "next/link";
 import UpdateSupplierPopup from '../suppliers/update/page';
 
 
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const StudentsPage = () => {
   const [suppliers, setSuppliers] = useState([]);
@@ -43,6 +44,7 @@ const StudentsPage = () => {
   }, [searchQuery]);
 
   const handleSearchChange = (e) => {
+
     setSearchQuery(e.target.value);
   };
 
@@ -130,6 +132,7 @@ const StudentsPage = () => {
       <div className={styles.container}>
         <div className={styles.top}>
           <Search
+
               placeholder="Search for a supplier..."
               value={searchQuery}
               onChange={handleSearchChange}

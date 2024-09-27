@@ -1,0 +1,72 @@
+.phasesForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 800px; /* Increased width for the form */
+    margin: auto; /* Center the form */
+    padding: 20px; /* Outer padding for the form */
+    background-color: #1c2935; /* Light background color */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); /* Enhanced shadow for depth */
+}
+
+.phase {
+    border: 1px solid #ccc;
+    padding: 20px; /* Increased padding for phases */
+    border-radius: 8px; /* Slightly more rounded corners */
+    background-color: #2b3e4f; /* White background for phases */
+    transition: box-shadow 0.3s; /* Smooth shadow transition */
+}
+
+.phase:hover {
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15); /* Shadow on hover */
+}
+
+.deliverable {
+    border: 1px dashed #888;
+    margin: 15px 0; /* Increased margin for deliverables */
+    padding: 15px; /* Increased padding for deliverables */
+    border-radius: 5px; /* Rounded corners */
+}
+
+.label {
+    margin-bottom: 10px; /* Spacing between label and input */
+    font-weight: bold; /* Bold labels for clarity */
+}
+
+.phasesForm input[type="text"],
+.phasesForm input[type="date"],
+.phasesForm select {
+    width: 100%; /* Full width inputs */
+    height: 40px; /* Increased height for inputs */
+    padding: 10px; /* Padding inside inputs */
+    margin-bottom: 15px; /* Space below inputs */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+.phasesForm button {
+    margin-top: 10px;
+    padding: 10px 15px; /* Adjusted button padding */
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff; /* Bootstrap blue */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
+}
+
+.phasesForm button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-1px); /* Slight lift effect on hover */
+}
+
+.phasesForm button[type="button"] {
+    width: auto; /* Width auto for buttons */
+}
+
+.deliverable label {
+    display: block; /* Make deliverable labels block-level */
+    margin-bottom: 10px; /* Spacing between deliverable label and input */
+}

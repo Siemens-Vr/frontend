@@ -5,6 +5,11 @@ import React, { useState } from 'react';
 import styles from './ProjectInfo.module.css';
 
 const ProjectInfo = () => {
+
+
+
+
+
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -20,13 +25,11 @@ const ProjectInfo = () => {
     const budget = searchParams.get('budget') || '';
     const funding = searchParams.get('funding') || '';
 
-    // Convert comma-separated strings to arrays
     const phasesArray = phases ? phases.split(', ') : [];
     const assigneesArray = assignees ? assignees.split(', ') : [];
 
     const [activeSection, setActiveSection] = useState('default');
 
-    // Function to navigate back to the default page with description, status, and top contributors
     const handleProjectNameClick = () => {
         setActiveSection('default');
     };
@@ -49,7 +52,6 @@ const ProjectInfo = () => {
                 </div>
             </div>
 
-            {/* Default content for the project: Description, Status, Top Contributors */}
             {activeSection === 'default' && (
                 <div className={styles.projectDetails}>
                     <p><strong>Status:</strong> {status}</p>
@@ -59,7 +61,6 @@ const ProjectInfo = () => {
             )}
 
             <div className={styles.contentWrapper}>
-                {/* Left Sidebar for Phases */}
                 {activeSection === 'phases' && (
                     <div className={styles.phasesSidebar}>
                         <h2>Phases</h2>
@@ -71,7 +72,6 @@ const ProjectInfo = () => {
                     </div>
                 )}
 
-                {/* Main Content */}
                 <div className={styles.mainContent}>
                     {activeSection === 'assignees' && (
                         <div>
@@ -93,7 +93,6 @@ const ProjectInfo = () => {
                     )}
                 </div>
 
-                {/* Right Sidebar for Budget and Funding */}
                 <div className={styles.budgetSidebar}>
                     <h2>Budget and Funding</h2>
                     <p><strong>Budget:</strong> {budget}</p>
