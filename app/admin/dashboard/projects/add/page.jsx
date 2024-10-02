@@ -3,10 +3,10 @@
 
 import React, { useState } from "react";
 import PhasesForm from "./PhasesForm";
-import AssigneeForm from "./AssigneesForm"; // Import AssigneeForm
+import AssigneeForm from "./AssigneesForm";
 import ProjectInfo from "./ProjectInfoPage";
 import BudgetFundingForm from "./BudgetFundingForm";
-import styles from "./AddProjectModal.module.css"; // Import CSS modules correctly
+import styles from "./AddProjectModal.module.css";
 
 const AddProjectModal = ({ isModalOpen, closeModal, addProject }) => {
     const [currentStep, setCurrentStep] = useState(0);
@@ -16,21 +16,38 @@ const AddProjectModal = ({ isModalOpen, closeModal, addProject }) => {
         startDate: "",
         endDate: "",
         comments: "",
-        phases: [{ name: "", deliverables: [{ name: "", status: "", comment: "" }] }],
+        phases: [{ name: "",startDate:"",endDate:"", deliverables: [{ name: "", status: "", comment: "" }] }],
         description: "",
         budget: "",
         funding: "",
         assignees: [],
     });
 
+    const [errors, setErrors] = useState({});
+    const [isProjectInfoCompleted, setIsProjectInfoCompleted] = useState(false);
+
     const steps = [
         { title: "Project Info", component: <ProjectInfo newProject={newProject} setNewProject={setNewProject} /> },
-        { title: "Assignees", component: <AssigneeForm assignees={newProject.assignees} setNewProject={setNewProject} /> }, // Add Assignees step
+        { title: "Assignees", component: <AssigneeForm assignees={newProject.assignees} setNewProject={setNewProject} /> },
         { title: "Phases", component: <PhasesForm phases={newProject.phases} setNewProject={setNewProject} /> },
         { title: "Budget & Funding", component: <BudgetFundingForm newProject={newProject} setNewProject={setNewProject} /> },
     ];
 
+    const validateProjectInfo = () => {
+        const newErrors = {};
+        if (!newProject.projectName) newErrors.projectName = "Project name is required";
+        if (!newProject.startDate) newErrors.startDate = "Start date is required";
+        if (!newProject.endDate) newErrors.endDate = "End date is required";
+        setErrors(newErrors);
+        const isValid = Object.keys(newErrors).length === 0;
+        setIsProjectInfoCompleted(isValid); // Set completion status
+        return isValid;
+    };
+
     const nextStep = () => {
+        if (currentStep === 0) {
+            if (!validateProjectInfo()) return; // Only proceed if validation passes
+        }
         setCurrentStep((prevStep) => Math.min(prevStep + 1, steps.length - 1));
     };
 
@@ -44,7 +61,6 @@ const AddProjectModal = ({ isModalOpen, closeModal, addProject }) => {
         closeModal(); // Close the modal after submission
     };
 
-    // Close modal when clicking outside the modal content
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
             closeModal();
@@ -62,7 +78,17 @@ const AddProjectModal = ({ isModalOpen, closeModal, addProject }) => {
                             <li
                                 key={index}
                                 className={`${styles.navItem} ${index === currentStep ? styles.active : ""}`}
-                                onClick={() => setCurrentStep(index)}
+                                // Only allow clicking if it's the current step or if project info is completed
+                                onClick={() => {
+                                    if (index === 0 || isProjectInfoCompleted) {
+                                        setCurrentStep(index);
+                                    }
+                                }}
+                                // Disable the steps after "Project Info" if validation hasn't passed
+                                style={{
+                                    cursor: index === 0 || isProjectInfoCompleted ? "pointer" : "not-allowed",
+                                    color: index !== 0 && !isProjectInfoCompleted ? "gray" : "inherit",
+                                }}
                             >
                                 {step.title}
                             </li>
@@ -72,6 +98,13 @@ const AddProjectModal = ({ isModalOpen, closeModal, addProject }) => {
                 <div className={styles.modalRight}>
                     <h2>{steps[currentStep].title}</h2>
                     {steps[currentStep].component}
+                    {currentStep === 0 && (
+                        <div className={styles.errorMessages}>
+                            {errors.projectName && <p>{errors.projectName}</p>}
+                            {errors.startDate && <p>{errors.startDate}</p>}
+                            {errors.endDate && <p>{errors.endDate}</p>}
+                        </div>
+                    )}
                     <div className={styles.modalButtons}>
                         <button onClick={prevStep} disabled={currentStep === 0}>
                             Back
