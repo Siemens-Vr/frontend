@@ -1,4 +1,3 @@
-// Dashboard.jsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -25,22 +24,10 @@ const Dashboard = () => {
             endDate: "2024-09-15",
             comments: "Good",
             description: "Very well",
-            phases: [{ name: '', deliverables: [{ name: '', status: '', comment: '', assignee: '' }] }],
+            phases: [{ name: '', startDate:"", endDate:"", deliverables: [{ name: '', status: '', comment: '', assignee: '' }] }],
             budget: '', // Add budget if needed
             funding: '', // Add funding if needed
             expectedBudget: 1000
-        },
-        {
-            projectName: "Beta",
-            status: "active",
-            assignees: ['Jake', 'Sara'],
-            startDate: "2024-08-01",
-            endDate: "2024-09-30",
-            description: "Development phase",
-            phases: [{ name: '', deliverables: [{ name: '', status: '', comment: '', assignee: '' }] }],
-            budget: '', // Add budget if needed
-            funding: '', // Add funding if needed
-            expectedBudget: 2000
         },
         {
             projectName: "Gamma",
@@ -118,7 +105,7 @@ const Dashboard = () => {
 
     // Function to add a new project
     const addProject = (newProject) => {
-        setProjects([...projects, newProject]);
+        setProjects((prevProjects) => [...prevProjects, newProject]); // Update projects with the new project
         closeModal(); // Close the modal after adding the project
     };
 
@@ -222,7 +209,7 @@ const Dashboard = () => {
             <AddProjectModal
                 isModalOpen={isModalOpen}
                 closeModal={closeModal}
-                addProject={addProject}
+                addProject={addProject} // Pass addProject function to the modal
             />
         </div>
     );

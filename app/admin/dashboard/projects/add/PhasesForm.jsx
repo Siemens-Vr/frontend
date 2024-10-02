@@ -167,6 +167,20 @@ const PhasesForm = ({ phases, setNewProject }) => {
                                                 )
                                             }
                                         />
+                                    </label><label>
+                                        Assignee
+                                        <input
+                                            type="text"
+                                            value={deliverable.assignee}
+                                            onChange={(e) =>
+                                                handleDeliverableChange(
+                                                    index,
+                                                    deliverableIndex,
+                                                    "assignee",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
                                     </label>
                                     <button
                                         type="button"

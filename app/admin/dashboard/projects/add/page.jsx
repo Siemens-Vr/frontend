@@ -9,6 +9,19 @@ import BudgetFundingForm from "./BudgetFundingForm";
 import styles from "./AddProjectModal.module.css";
 
 const AddProjectModal = ({ isModalOpen, closeModal, addProject }) => {
+
+    const projectData = {
+        projectName: "",
+        status: "",
+        startDate: "",
+        endDate: "",
+        comments: "",
+        phases: [{ name: "",startDate:"",endDate:"", deliverables: [{ name: "", status: "", comment: "" , assignee:""}] }],
+        budget: "",
+        funding: "",
+        assignees: [],
+    }
+
     const [currentStep, setCurrentStep] = useState(0);
     const [newProject, setNewProject] = useState({
         projectName: "",
@@ -16,7 +29,7 @@ const AddProjectModal = ({ isModalOpen, closeModal, addProject }) => {
         startDate: "",
         endDate: "",
         comments: "",
-        phases: [{ name: "",startDate:"",endDate:"", deliverables: [{ name: "", status: "", comment: "" }] }],
+        phases: [{ name: "",startDate:"",endDate:"", deliverables: [{ name: "", status: "", comment: "", assignee:"" }] }],
         description: "",
         budget: "",
         funding: "",
