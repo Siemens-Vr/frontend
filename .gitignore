@@ -1,15 +1,9 @@
-<<<<<<< HEAD
+
 node_modules
 .env
 iisnode
 .next
 .idea
 config
-=======
-node_modules
-.env
-iisnode
-.next
-.idea
-config.idea/
->>>>>>> 5ab9ad14fcc152fce977edee36b5ea59e6e94a58
+
+
