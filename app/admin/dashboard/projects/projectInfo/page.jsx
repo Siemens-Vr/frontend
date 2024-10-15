@@ -213,34 +213,67 @@ const ProjectInfo = () => {
 
                 {/* Assignees Section */}
                 {activeSection === 'assignees' && (
-                    <div className={styles.assignees}>
-                        <h2>Assignees</h2>
-                        <ul>
-                            {assignees.map((assignee, index) => (
-                                <li key={index}>
-                                    {assignee}
-                                    <FaEdit className={styles.editIcon} onClick={() => editAssignee(index)} />
-                                    <FaTrash className={styles.deleteIcon} onClick={() => deleteAssignee(index)} />
-                                </li>
-                            ))}
-                        </ul>
-                        <button onClick={() => setShowAssigneeInput(!showAssigneeInput)} className={styles.addButton}>
-                            <FaPlus /> {showAssigneeInput ? 'Cancel' : 'Add Assignee'}
-                        </button>
-                        {showAssigneeInput && (
-                            <>
-                                <input
-                                    type="text"
-                                    value={newAssignee}
-                                    onChange={(e) => setNewAssignee(e.target.value)}
-                                    placeholder="Add new assignee"
-                                    className={styles.inputField}
-                                />
-                                <button onClick={addAssignee} className={styles.addButton}><FaPlus /> Confirm</button>
-                            </>
-                        )}
-                    </div>
-                )}
+    <div className={styles.assignees}>
+        <h2>Assignees</h2>
+        <table className={styles.assigneeTable}>
+            <thead>
+                <tr>
+                    <th>Profile</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {assignees.map((assignee, index) => (
+                    <tr key={index}>
+                        <td>
+                            <img
+                                src={`https://i.pravatar.cc/150?img=${index + 1}`}
+                                alt="Profile"
+                                className={styles.profilePic}
+                            />
+                        </td>
+                        <td>{assignee}</td>
+                        <td>
+                            <FaEdit
+                                className={styles.editIcon}
+                                onClick={() => editAssignee(index)}
+                            />
+                            <FaTrash
+                                className={styles.deleteIcon}
+                                onClick={() => deleteAssignee(index)}
+                            />
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+
+        <button
+            onClick={() => setShowAssigneeInput(!showAssigneeInput)}
+            className={styles.addButton}
+        >
+            <FaPlus /> {showAssigneeInput ? 'Cancel' : 'Add Assignee'}
+        </button>
+
+        {showAssigneeInput && (
+            <>
+                <input
+                    type="text"
+                    value={newAssignee}
+                    onChange={(e) => setNewAssignee(e.target.value)}
+                    placeholder="Add new assignee"
+                    className={styles.inputField}
+                />
+                <button onClick={addAssignee} className={styles.addButton}>
+                    <FaPlus /> Confirm
+                </button>
+            </>
+        )}
+    </div>
+)}
+
+
 
                 {/* Deliverables Section */}
                 {activeSection === 'deliverables' && (
