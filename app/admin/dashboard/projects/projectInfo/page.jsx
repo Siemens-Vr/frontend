@@ -36,29 +36,97 @@ const ProjectInfo = () => {
     const budget = searchParams.get('budget') || '$50,000';
     const funding = searchParams.get('funding') || '$30,000';
 
-    const [assignees, setAssignees] = useState(['John Doe', 'Jane Smith', 'Alice Johnson']);
+    const [assignees, setAssignees] = useState([
+        { name: 'John Doe', gender: 'Male', access: 'Admin', role: 'Developer', dateJoined: '2023-01-15' },
+        { name: 'Jane Smith', gender: 'Female', access: 'User', role: 'Designer', dateJoined: '2023-02-20' },
+        { name: 'Alice Johnson', gender: 'Female', access: 'Admin', role: 'Manager', dateJoined: '2022-12-10' }
+    ]);
     const [deliverables, setDeliverables] = useState(['Initial Setup', 'Feature Development', 'Testing']);
-    const [phases, setPhases] = useState(['Planning', 'Development', 'Testing']);
+
+
+    const [phases, setPhases] = useState([
+        {
+            name: "Planning",
+            startDate: "2024-01-01",
+            endDate: "2024-01-15",
+            status: "Completed",
+            deliverables: [{
+                name: 'Initial Setup',
+                status: 'Completed',
+                assignees: ['John Doe'],
+                startDate: '2024-01-01',
+                expectedFinish: '2024-01-05',
+                budget: 5000,
+            },],
+        },
+        {
+            name: "Development",
+            startDate: "2024-01-16",
+            endDate: "2024-02-15",
+            status: "Ongoing",
+            deliverables: [{
+                name: 'Feature Development',
+                status: 'Ongoing',
+                assignees: ['Jane Smith', 'Alice Johnson'],
+                startDate: '2024-01-06',
+                expectedFinish: '2024-01-20',
+                budget: 15000,
+            },],
+        },
+        {
+            name: "Testing",
+            startDate: "2024-02-16",
+            endDate: "2024-02-28",
+            status: "Not Started",
+            deliverables: [{
+                name: 'Feature Development',
+                status: 'Ongoing',
+                assignees: ['Jane Smith', 'Alice Johnson'],
+                startDate: '2024-01-06',
+                expectedFinish: '2024-01-20',
+                budget: 15000,
+            },],
+        },
+    ]);
+
+    const [selectedPhase, setSelectedPhase] = useState(null); // Track the selected phase
+
+
+
+
     const [activeSection, setActiveSection] = useState('details');
 
     // New input states for adding items
-    const [newAssignee, setNewAssignee] = useState('');
+    const [newAssignee, setNewAssignee] = useState({
+        name: '',
+        gender: '',
+        access: '',
+        role: '',
+        dateJoined: ''
+    });
+
+
+
     const [newDeliverable, setNewDeliverable] = useState('');
-    const [newPhase, setNewPhase] = useState('');
+
 
     // Toggle input visibility
     const [showAssigneeInput, setShowAssigneeInput] = useState(false);
     const [showDeliverableInput, setShowDeliverableInput] = useState(false);
-    const [showPhaseInput, setShowPhaseInput] = useState(false);
 
     // Handlers for Assignees CRUD
     const addAssignee = () => {
-        if (newAssignee.trim()) {
-            setAssignees([...assignees, newAssignee]);
-            setNewAssignee('');
-            setShowAssigneeInput(false);
+        const { name, gender, access, role, dateJoined } = newAssignee;
+
+        if (name.trim()) {
+            setAssignees([...assignees, { name, gender, access, role, dateJoined }]);
+            setNewAssignee({ name: '', gender: '', access: '', role: '', dateJoined: '' }); // Reset form
+            setShowAssigneeInput(false); // Hide input form
+        } else {
+            alert('Name is required!');
         }
     };
+
 
     const deleteAssignee = (index) => {
         const updatedAssignees = assignees.filter((_, i) => i !== index);
@@ -98,11 +166,17 @@ const ProjectInfo = () => {
     };
 
     // Handlers for Phases CRUD
+    const [newPhase, setNewPhase] = useState({ name: '', startDate: '', endDate: '', status: '', deliverables: [] });
+    const [showPhaseInput, setShowPhaseInput] = useState(false);
+
+    // Handlers for Phases CRUD
     const addPhase = () => {
-        if (newPhase.trim()) {
-            setPhases([...phases, newPhase]);
-            setNewPhase('');
-            setShowPhaseInput(false);
+        if (newPhase.name.trim()) {
+            setPhases([...phases, { ...newPhase }]);
+            setNewPhase({ name: '', startDate: '', endDate: '', status: '', deliverables: [] }); // Reset form
+            setShowPhaseInput(false); // Hide input form
+        } else {
+            alert('Phase name is required!');
         }
     };
 
@@ -112,13 +186,14 @@ const ProjectInfo = () => {
     };
 
     const editPhase = (index) => {
-        const edited = prompt('Edit Phase:', phases[index]);
-        if (edited !== null) {
+        const editedName = prompt('Edit Phase Name:', phases[index].name);
+        if (editedName !== null) {
             const updatedPhases = phases.slice();
-            updatedPhases[index] = edited.trim();
+            updatedPhases[index].name = editedName.trim();
             setPhases(updatedPhases);
         }
     };
+
 
     // Sample data for charts
     const budgetData = [
@@ -213,65 +288,103 @@ const ProjectInfo = () => {
 
                 {/* Assignees Section */}
                 {activeSection === 'assignees' && (
-    <div className={styles.assignees}>
-        <h2>Assignees</h2>
-        <table className={styles.assigneeTable}>
-            <thead>
-                <tr>
-                    <th>Profile</th>
-                    <th>Name</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {assignees.map((assignee, index) => (
-                    <tr key={index}>
-                        <td>
-                            <img
-                                src={`https://i.pravatar.cc/150?img=${index + 1}`}
-                                alt="Profile"
-                                className={styles.profilePic}
-                            />
-                        </td>
-                        <td>{assignee}</td>
-                        <td>
-                            <FaEdit
-                                className={styles.editIcon}
-                                onClick={() => editAssignee(index)}
-                            />
-                            <FaTrash
-                                className={styles.deleteIcon}
-                                onClick={() => deleteAssignee(index)}
-                            />
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+                    <div className={styles.assignees}>
+                        <div className={styles.assigneesHeader}>
+                            <h2>Assignees</h2>
+                            <button
+                                onClick={() => setShowAssigneeInput(!showAssigneeInput)}
+                                className={styles.addButtonTopRight}
+                            >
+                                <FaPlus /> {showAssigneeInput ? 'Cancel' : 'Add Assignee'}
+                            </button>
+                        </div>
 
-        <button
-            onClick={() => setShowAssigneeInput(!showAssigneeInput)}
-            className={styles.addButton}
-        >
-            <FaPlus /> {showAssigneeInput ? 'Cancel' : 'Add Assignee'}
-        </button>
+                        <table className={styles.assigneeTable}>
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Gender</th>
+                                <th>Access</th>
+                                <th>Role</th>
+                                <th>Date Joined</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {assignees.map((assignee, index) => (
+                                <tr key={index}>
+                                    <td>
+                                        <img
+                                            src={`https://i.pravatar.cc/150?img=${index + 1}`}
+                                            alt="Profile"
+                                            className={styles.profilePic}
+                                        />
+                                    </td>
+                                    <td>{assignee.name}</td>
+                                    <td>{assignee.gender}</td>
+                                    <td>{assignee.access}</td>
+                                    <td>{assignee.role}</td>
+                                    <td>{assignee.dateJoined}</td>
+                                    <td>
+                                        <FaEdit
+                                            className={styles.editIcon}
+                                            onClick={() => editAssignee(index)}
+                                        />
+                                        <FaTrash
+                                            className={styles.deleteIcon}
+                                            onClick={() => deleteAssignee(index)}
+                                        />
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                        {showAssigneeInput && (
+                            <div className={styles.inputContainer}>
+                                <input
+                                    type="text"
+                                    value={newAssignee.name}
+                                    onChange={(e) => setNewAssignee({ ...newAssignee, name: e.target.value })}
+                                    placeholder="Name"
+                                    className={styles.inputField}
+                                />
+                                <input
+                                    type="text"
+                                    value={newAssignee.gender}
+                                    onChange={(e) => setNewAssignee({ ...newAssignee, gender: e.target.value })}
+                                    placeholder="Gender"
+                                    className={styles.inputField}
+                                />
+                                <input
+                                    type="text"
+                                    value={newAssignee.access}
+                                    onChange={(e) => setNewAssignee({ ...newAssignee, access: e.target.value })}
+                                    placeholder="Access Level"
+                                    className={styles.inputField}
+                                />
+                                <input
+                                    type="text"
+                                    value={newAssignee.role}
+                                    onChange={(e) => setNewAssignee({ ...newAssignee, role: e.target.value })}
+                                    placeholder="Role"
+                                    className={styles.inputField}
+                                />
+                                <input
+                                    type="date"
+                                    value={newAssignee.dateJoined}
+                                    onChange={(e) => setNewAssignee({ ...newAssignee, dateJoined: e.target.value })}
+                                    className={styles.inputField}
+                                />
+                                <button onClick={addAssignee} className={styles.addButton}>
+                                    <FaPlus /> Confirm
+                                </button>
+                            </div>
+                        )}
 
-        {showAssigneeInput && (
-            <>
-                <input
-                    type="text"
-                    value={newAssignee}
-                    onChange={(e) => setNewAssignee(e.target.value)}
-                    placeholder="Add new assignee"
-                    className={styles.inputField}
-                />
-                <button onClick={addAssignee} className={styles.addButton}>
-                    <FaPlus /> Confirm
-                </button>
-            </>
-        )}
-    </div>
-)}
+                    </div>
+                )}
+
 
 
 
@@ -307,35 +420,84 @@ const ProjectInfo = () => {
                 )}
 
                 {/* Phases Section */}
+                {/* Phases Section */}
                 {activeSection === 'phases' && (
                     <div className={styles.phases}>
                         <h2>Phases</h2>
-                        <ul>
+                        <div className={styles.phaseCards}>
                             {phases.map((phase, index) => (
-                                <li key={index}>
-                                    {phase}
-                                    <FaEdit className={styles.editIcon} onClick={() => editPhase(index)} />
-                                    <FaTrash className={styles.deleteIcon} onClick={() => deletePhase(index)} />
-                                </li>
+                                <div
+                                    key={index}
+                                    className={styles.phaseCard}
+                                    onClick={() => console.log(`Phase: ${phase.name}`)} // Log the selected phase's name
+                                >
+                                    <h3>{phase.name}</h3>
+                                    <p><strong>Start Date:</strong> {phase.startDate}</p>
+                                    <p><strong>End Date:</strong> {phase.endDate}</p>
+                                    <p><strong>Status:</strong> {phase.status}</p>
+                                    <div className={styles.cardActions}>
+                                        <FaEdit
+                                            className={styles.editIcon}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Prevent triggering card click
+                                                editPhase(index);
+                                            }}
+                                        />
+                                        <FaTrash
+                                            className={styles.deleteIcon}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                deletePhase(index);
+                                            }}
+                                        />
+                                    </div>
+                                </div>
                             ))}
-                        </ul>
-                        <button onClick={() => setShowPhaseInput(!showPhaseInput)} className={styles.addButton}>
+                        </div>
+                        <button
+                            onClick={() => setShowPhaseInput(!showPhaseInput)}
+                            className={styles.addButton}
+                        >
                             <FaPlus /> {showPhaseInput ? 'Cancel' : 'Add Phase'}
                         </button>
                         {showPhaseInput && (
                             <>
                                 <input
                                     type="text"
-                                    value={newPhase}
-                                    onChange={(e) => setNewPhase(e.target.value)}
-                                    placeholder="Add new phase"
+                                    value={newPhase.name}
+                                    onChange={(e) => setNewPhase({ ...newPhase, name: e.target.value })}
+                                    placeholder="Phase Name"
                                     className={styles.inputField}
                                 />
-                                <button onClick={addPhase} className={styles.addButton}><FaPlus /> Confirm</button>
+                                <input
+                                    type="date"
+                                    value={newPhase.startDate}
+                                    onChange={(e) => setNewPhase({ ...newPhase, startDate: e.target.value })}
+                                    placeholder="Start Date"
+                                    className={styles.inputField}
+                                />
+                                <input
+                                    type="date"
+                                    value={newPhase.endDate}
+                                    onChange={(e) => setNewPhase({ ...newPhase, endDate: e.target.value })}
+                                    placeholder="End Date"
+                                    className={styles.inputField}
+                                />
+                                <input
+                                    type="text"
+                                    value={newPhase.status}
+                                    onChange={(e) => setNewPhase({ ...newPhase, status: e.target.value })}
+                                    placeholder="Status"
+                                    className={styles.inputField}
+                                />
+                                <button onClick={addPhase} className={styles.addButton}>
+                                    <FaPlus /> Confirm
+                                </button>
                             </>
                         )}
                     </div>
                 )}
+
 
                 {/* Calendar Section */}
                 {activeSection === 'calendar' && (
