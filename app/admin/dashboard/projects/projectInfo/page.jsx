@@ -29,7 +29,7 @@ import {
 const ProjectInfo = () => {
     const searchParams = useSearchParams();
 
-    // Extract query parameters or set default values
+// Extract query parameters or set default values
     const projectName = searchParams.get('projectName') || 'Project Alpha';
     const status = searchParams.get('status') || 'Active';
     const description = searchParams.get('description') || 'This project aims to develop a comprehensive management tool.';
@@ -39,10 +39,10 @@ const ProjectInfo = () => {
     const [assignees, setAssignees] = useState([
         { name: 'John Doe', gender: 'Male', access: 'Admin', role: 'Developer', dateJoined: '2023-01-15' },
         { name: 'Jane Smith', gender: 'Female', access: 'User', role: 'Designer', dateJoined: '2023-02-20' },
-        { name: 'Alice Johnson', gender: 'Female', access: 'Admin', role: 'Manager', dateJoined: '2022-12-10' }
+        { name: 'Alice Johnson', gender: 'Female', access: 'Admin', role: 'Manager', dateJoined: '2022-12-10' },
     ]);
-    const [deliverables, setDeliverables] = useState(['Initial Setup', 'Feature Development', 'Testing']);
 
+    const [deliverables, setDeliverables] = useState(['Initial Setup', 'Feature Development', 'Testing']);
 
     const [phases, setPhases] = useState([
         {
@@ -51,13 +51,9 @@ const ProjectInfo = () => {
             endDate: "2024-01-15",
             status: "Completed",
             deliverables: [{
-                name: 'Initial Setup',
-                status: 'Completed',
-                assignees: ['John Doe'],
-                startDate: '2024-01-01',
-                expectedFinish: '2024-01-05',
-                budget: 5000,
-            },],
+                name: 'Initial Setup', status: 'Completed', assignees: ['John Doe'],
+                startDate: '2024-01-01', expectedFinish: '2024-01-05', budget: 5000
+            }],
         },
         {
             name: "Development",
@@ -65,13 +61,10 @@ const ProjectInfo = () => {
             endDate: "2024-02-15",
             status: "Ongoing",
             deliverables: [{
-                name: 'Feature Development',
-                status: 'Ongoing',
+                name: 'Feature Development', status: 'Ongoing',
                 assignees: ['Jane Smith', 'Alice Johnson'],
-                startDate: '2024-01-06',
-                expectedFinish: '2024-01-20',
-                budget: 15000,
-            },],
+                startDate: '2024-01-06', expectedFinish: '2024-01-20', budget: 15000
+            }],
         },
         {
             name: "Testing",
@@ -79,70 +72,47 @@ const ProjectInfo = () => {
             endDate: "2024-02-28",
             status: "Not Started",
             deliverables: [{
-                name: 'Feature Development',
-                status: 'Ongoing',
+                name: 'Feature Development', status: 'Ongoing',
                 assignees: ['Jane Smith', 'Alice Johnson'],
-                startDate: '2024-01-06',
-                expectedFinish: '2024-01-20',
-                budget: 15000,
-            },],
+                startDate: '2024-01-06', expectedFinish: '2024-01-20', budget: 15000
+            }],
         },
     ]);
 
-    const [selectedPhase, setSelectedPhase] = useState(null); // Track the selected phase
-
-
-
-
     const [activeSection, setActiveSection] = useState('details');
-
-    // New input states for adding items
-    const [newAssignee, setNewAssignee] = useState({
-        name: '',
-        gender: '',
-        access: '',
-        role: '',
-        dateJoined: ''
-    });
-
-
-
+    const [newAssignee, setNewAssignee] = useState({ name: '', gender: '', access: '', role: '', dateJoined: '' });
     const [newDeliverable, setNewDeliverable] = useState('');
-
-
-    // Toggle input visibility
     const [showAssigneeInput, setShowAssigneeInput] = useState(false);
     const [showDeliverableInput, setShowDeliverableInput] = useState(false);
+    const [newPhase, setNewPhase] = useState({ name: '', startDate: '', endDate: '', status: '', deliverables: [] });
+    const [showPhaseInput, setShowPhaseInput] = useState(false);
+    const [selectedPhase, setSelectedPhase] = useState(null);
+    const [newPhaseDeliverable, setNewPhaseDeliverable] = useState({ name: '', status: '', assignees: [], budget: 0 });
+    const [showPhaseDeliverableInput, setShowPhaseDeliverableInput] = useState(false);
 
-    // Handlers for Assignees CRUD
+// Handlers for Assignees CRUD
     const addAssignee = () => {
-        const { name, gender, access, role, dateJoined } = newAssignee;
-
-        if (name.trim()) {
-            setAssignees([...assignees, { name, gender, access, role, dateJoined }]);
-            setNewAssignee({ name: '', gender: '', access: '', role: '', dateJoined: '' }); // Reset form
-            setShowAssigneeInput(false); // Hide input form
+        if (newAssignee.name.trim()) {
+            setAssignees([...assignees, newAssignee]);
+            setNewAssignee({ name: '', gender: '', access: '', role: '', dateJoined: '' });
+            setShowAssigneeInput(false);
         } else {
             alert('Name is required!');
         }
     };
 
-
-    const deleteAssignee = (index) => {
-        const updatedAssignees = assignees.filter((_, i) => i !== index);
-        setAssignees(updatedAssignees);
-    };
+    const deleteAssignee = (index) => setAssignees(assignees.filter((_, i) => i !== index));
 
     const editAssignee = (index) => {
-        const edited = prompt('Edit Assignee:', assignees[index]);
-        if (edited !== null) {
-            const updatedAssignees = assignees.slice();
-            updatedAssignees[index] = edited.trim();
-            setAssignees(updatedAssignees);
+        const edited = prompt('Edit Assignee:', assignees[index].name);
+        if (edited) {
+            const updated = [...assignees];
+            updated[index].name = edited.trim();
+            setAssignees(updated);
         }
     };
 
-    // Handlers for Deliverables CRUD
+// Handlers for Deliverables CRUD
     const addDeliverable = () => {
         if (newDeliverable.trim()) {
             setDeliverables([...deliverables, newDeliverable]);
@@ -151,51 +121,101 @@ const ProjectInfo = () => {
         }
     };
 
-    const deleteDeliverable = (index) => {
-        const updatedDeliverables = deliverables.filter((_, i) => i !== index);
-        setDeliverables(updatedDeliverables);
-    };
+    const deleteDeliverable = (index) => setDeliverables(deliverables.filter((_, i) => i !== index));
 
     const editDeliverable = (index) => {
         const edited = prompt('Edit Deliverable:', deliverables[index]);
-        if (edited !== null) {
-            const updatedDeliverables = deliverables.slice();
-            updatedDeliverables[index] = edited.trim();
-            setDeliverables(updatedDeliverables);
+        if (edited) {
+            const updated = [...deliverables];
+            updated[index] = edited.trim();
+            setDeliverables(updated);
         }
     };
 
-    // Handlers for Phases CRUD
-    const [newPhase, setNewPhase] = useState({ name: '', startDate: '', endDate: '', status: '', deliverables: [] });
-    const [showPhaseInput, setShowPhaseInput] = useState(false);
-
-    // Handlers for Phases CRUD
+// Handlers for Phases CRUD
     const addPhase = () => {
         if (newPhase.name.trim()) {
-            setPhases([...phases, { ...newPhase }]);
-            setNewPhase({ name: '', startDate: '', endDate: '', status: '', deliverables: [] }); // Reset form
-            setShowPhaseInput(false); // Hide input form
+            setPhases([...phases, newPhase]);
+            setNewPhase({ name: '', startDate: '', endDate: '', status: '', deliverables: [] });
+            setShowPhaseInput(false);
         } else {
             alert('Phase name is required!');
         }
     };
 
-    const deletePhase = (index) => {
-        const updatedPhases = phases.filter((_, i) => i !== index);
-        setPhases(updatedPhases);
-    };
+    const deletePhase = (index) => setPhases(phases.filter((_, i) => i !== index));
 
     const editPhase = (index) => {
         const editedName = prompt('Edit Phase Name:', phases[index].name);
-        if (editedName !== null) {
-            const updatedPhases = phases.slice();
-            updatedPhases[index].name = editedName.trim();
+        if (editedName) {
+            const updated = [...phases];
+            updated[index].name = editedName.trim();
+            setPhases(updated);
+        }
+    };
+
+// Handle phase selection
+    const handlePhaseClick = (index) => setSelectedPhase(phases[index]);
+
+// Add new phase deliverable
+    const addPhaseDeliverable = () => {
+        if (selectedPhase && newPhaseDeliverable.name.trim()) {
+            const updatedPhases = phases.map((phase) =>
+                phase.name === selectedPhase.name
+                    ? { ...phase, deliverables: [...phase.deliverables, newPhaseDeliverable] }
+                    : phase
+            );
+            setPhases(updatedPhases);
+            setNewPhaseDeliverable({ name: '', status: '', assignees: [], budget: 0 });
+            setShowPhaseDeliverableInput(false);
+        } else {
+            alert('Deliverable name is required!');
+        }
+    };
+
+// Delete phase deliverable
+    const handleDeletePhaseDeliverable = (index) => {
+        const updatedDeliverables = selectedPhase.deliverables.filter((_, i) => i !== index);
+        const updatedPhases = phases.map((phase) =>
+            phase.name === selectedPhase.name ? { ...phase, deliverables: updatedDeliverables } : phase
+        );
+        setPhases(updatedPhases);
+    };
+
+// Edit phase deliverable
+    const handleEditPhaseDeliverable = (index) => {
+        const deliverable = selectedPhase.deliverables[index];
+
+        const editedName = prompt('Edit Deliverable Name:', deliverable.name);
+        const editedStatus = prompt('Edit Deliverable Status:', deliverable.status);
+        const editedAssignees = prompt('Edit Assignees (comma-separated):', deliverable.assignees.join(', '));
+        const editedBudget = prompt('Edit Deliverable Budget:', deliverable.budget);
+
+        // Check if any edited values are present
+        if (editedName || editedStatus || editedAssignees || editedBudget) {
+            const updatedDeliverables = selectedPhase.deliverables.map((item, idx) => {
+                if (idx === index) {
+                    return {
+                        ...item,
+                        name: editedName ? editedName.trim() : item.name,
+                        status: editedStatus ? editedStatus.trim() : item.status,
+                        assignees: editedAssignees ? editedAssignees.split(',').map(a => a.trim()) : item.assignees,
+                        budget: editedBudget ? editedBudget.trim() : item.budget,
+                    };
+                }
+                return item; // Return unchanged item
+            });
+
+            const updatedPhases = phases.map((phase) =>
+                phase.name === selectedPhase.name ? { ...phase, deliverables: updatedDeliverables } : phase
+            );
+
             setPhases(updatedPhases);
         }
     };
 
 
-    // Sample data for charts
+// Sample data for charts
     const budgetData = [
         { month: 'Jan', Budget: 4000, Funding: 2400 },
         { month: 'Feb', Budget: 3000, Funding: 1398 },
@@ -420,7 +440,6 @@ const ProjectInfo = () => {
                 )}
 
                 {/* Phases Section */}
-                {/* Phases Section */}
                 {activeSection === 'phases' && (
                     <div className={styles.phases}>
                         <h2>Phases</h2>
@@ -429,7 +448,7 @@ const ProjectInfo = () => {
                                 <div
                                     key={index}
                                     className={styles.phaseCard}
-                                    onClick={() => console.log(`Phase: ${phase.name}`)} // Log the selected phase's name
+                                    onClick={() => handlePhaseClick(index)} // Set selected phase on click
                                 >
                                     <h3>{phase.name}</h3>
                                     <p><strong>Start Date:</strong> {phase.startDate}</p>
@@ -454,6 +473,98 @@ const ProjectInfo = () => {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Detailed view for selected phase */}
+                        {selectedPhase && (
+                            <div className={styles.phaseDetails}>
+                                <h3>Phase Details: {selectedPhase.name}</h3>
+                                <p><strong>Status:</strong> {selectedPhase.status}</p>
+                                <p><strong>Start Date:</strong> {selectedPhase.startDate}</p>
+                                <p><strong>End Date:</strong> {selectedPhase.endDate}</p>
+
+                                <h4>Phase Deliverables:</h4>
+                                <table className={styles.deliverableTable}>
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Assignees</th>
+                                        <th>Budget</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {selectedPhase.deliverables.map((phaseDeliverable, i) => (
+                                        <tr key={i}>
+                                            <td>{phaseDeliverable.name}</td>
+                                            <td>{phaseDeliverable.status}</td>
+                                            <td>{phaseDeliverable.assignees.join(', ')}</td>
+                                            <td>${phaseDeliverable.budget}</td>
+                                            <td>
+                                                <button onClick={() => handleEditPhaseDeliverable(i)}>Edit</button>
+                                                <button onClick={() => handleDeletePhaseDeliverable(i)}>Delete</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+
+                                {/* Add Phase Deliverable Form */}
+                                {showPhaseDeliverableInput && (
+                                    <div className={styles.newDeliverableForm}>
+                                        <input
+                                            type="text"
+                                            placeholder="Deliverable Name"
+                                            value={newPhaseDeliverable.name}
+                                            onChange={(e) =>
+                                                setNewPhaseDeliverable({ ...newPhaseDeliverable, name: e.target.value })
+                                            }
+                                            className={styles.inputField}
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="Status"
+                                            value={newPhaseDeliverable.status}
+                                            onChange={(e) =>
+                                                setNewPhaseDeliverable({ ...newPhaseDeliverable, status: e.target.value })
+                                            }
+                                            className={styles.inputField}
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="Assignees (comma-separated)"
+                                            value={newPhaseDeliverable.assignees}
+                                            onChange={(e) =>
+                                                setNewPhaseDeliverable({
+                                                    ...newPhaseDeliverable,
+                                                    assignees: e.target.value.split(',').map(a => a.trim()),
+                                                })
+                                            }
+                                            className={styles.inputField}
+                                        />
+                                        <input
+                                            type="number"
+                                            placeholder="Budget"
+                                            value={newPhaseDeliverable.budget}
+                                            onChange={(e) =>
+                                                setNewPhaseDeliverable({ ...newPhaseDeliverable, budget: e.target.value })
+                                            }
+                                            className={styles.inputField}
+                                        />
+                                        <button onClick={addPhaseDeliverable}>Add Deliverable</button>
+                                    </div>
+                                )}
+
+                                <button onClick={() => setShowPhaseDeliverableInput(!showPhaseDeliverableInput)}>
+                                    {showPhaseDeliverableInput ? 'Cancel' : 'Add Phase Deliverable'}
+                                </button>
+
+                                <button onClick={() => setSelectedPhase(null)} className={styles.closeButtonTopRight}>
+                                    ✕
+                                </button>
+                            </div>
+                        )}
+
                         <button
                             onClick={() => setShowPhaseInput(!showPhaseInput)}
                             className={styles.addButton}
@@ -499,6 +610,8 @@ const ProjectInfo = () => {
                 )}
 
 
+
+
                 {/* Calendar Section */}
                 {activeSection === 'calendar' && (
                     <div className={styles.calendarSection}>
@@ -509,6 +622,7 @@ const ProjectInfo = () => {
             </div>
 
             {/* Right Sidebar */}
+
             <div className={styles.rightSidebar}>
                 <div className={styles.budgetCard}>
                     <FaDollarSign className={styles.budgetIcon} />
