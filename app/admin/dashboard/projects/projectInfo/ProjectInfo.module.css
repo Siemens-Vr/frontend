@@ -392,4 +392,130 @@
 }
 
 
+.deliverableTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
 
+.deliverableTable th,
+.deliverableTable td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.deliverableTable th {
+    background-color: var(--bgSoft);
+    color: var(--text);
+}
+
+.actionButtons button {
+    margin: 0 5px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.editButton {
+    background-color: #1e90ff;
+    color: white;
+}
+
+.editButton:hover {
+    background-color: #1c86ee;
+}
+
+.deleteButton {
+    background-color: #ff6347;
+    color: white;
+}
+
+.deleteButton:hover {
+    background-color: #ff4500;
+}
+
+
+.newDeliverableForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 12px;
+}
+
+.inputField {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+.inputField:focus {
+    border-color: #1e90ff;
+    outline: none;
+}
+
+.primaryButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4caf50;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.primaryButton:hover {
+    background-color: #45a049;
+}
+
+.primaryButton:active {
+    transform: scale(0.98);
+}
+
+.plusIcon {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+
+.toggleButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+    margin-top: 10px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.toggleButton:hover {
+    background-color: #1c86ee;
+    transform: scale(1.05);
+}
+
+.toggleButton:active {
+    transform: scale(0.98);
+}
+
+.icon {
+    font-size: 15px;
+}

@@ -14,7 +14,7 @@ import {
     FaDollarSign,
     FaEdit,
     FaTrash,
-    FaPlus
+    FaPlus, FaTimes
 } from 'react-icons/fa';
 import {
     LineChart,
@@ -406,8 +406,6 @@ const ProjectInfo = () => {
                 )}
 
 
-
-
                 {/* Deliverables Section */}
                 {activeSection === 'deliverables' && (
                     <div className={styles.deliverables}>
@@ -448,7 +446,7 @@ const ProjectInfo = () => {
                                 <div
                                     key={index}
                                     className={styles.phaseCard}
-                                    onClick={() => handlePhaseClick(index)} // Set selected phase on click
+                                    onClick={() => handlePhaseClick(index)}
                                 >
                                     <h3>{phase.name}</h3>
                                     <p><strong>Start Date:</strong> {phase.startDate}</p>
@@ -458,7 +456,7 @@ const ProjectInfo = () => {
                                         <FaEdit
                                             className={styles.editIcon}
                                             onClick={(e) => {
-                                                e.stopPropagation(); // Prevent triggering card click
+                                                e.stopPropagation();
                                                 editPhase(index);
                                             }}
                                         />
@@ -489,20 +487,26 @@ const ProjectInfo = () => {
                                         <th>Name</th>
                                         <th>Status</th>
                                         <th>Assignees</th>
-                                        <th>Budget</th>
+                                        <th>Budget ($)</th>
                                         <th>Actions</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {selectedPhase.deliverables.map((phaseDeliverable, i) => (
+                                    {selectedPhase.deliverables.map((deliverable, i) => (
                                         <tr key={i}>
-                                            <td>{phaseDeliverable.name}</td>
-                                            <td>{phaseDeliverable.status}</td>
-                                            <td>{phaseDeliverable.assignees.join(', ')}</td>
-                                            <td>${phaseDeliverable.budget}</td>
-                                            <td>
-                                                <button onClick={() => handleEditPhaseDeliverable(i)}>Edit</button>
-                                                <button onClick={() => handleDeletePhaseDeliverable(i)}>Delete</button>
+                                            <td>{deliverable.name}</td>
+                                            <td>{deliverable.status}</td>
+                                            <td>{deliverable.assignees.join(', ')}</td>
+                                            <td>${deliverable.budget}</td>
+                                            <td className={styles.actionButtons}>
+                                                <button onClick={() => handleEditPhaseDeliverable(i)}
+                                                        className={styles.editButton}>
+                                                    Edit
+                                                </button>
+                                                <button onClick={() => handleDeletePhaseDeliverable(i)}
+                                                        className={styles.deleteButton}>
+                                                    Delete
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
@@ -517,7 +521,7 @@ const ProjectInfo = () => {
                                             placeholder="Deliverable Name"
                                             value={newPhaseDeliverable.name}
                                             onChange={(e) =>
-                                                setNewPhaseDeliverable({ ...newPhaseDeliverable, name: e.target.value })
+                                                setNewPhaseDeliverable({...newPhaseDeliverable, name: e.target.value})
                                             }
                                             className={styles.inputField}
                                         />
@@ -526,7 +530,7 @@ const ProjectInfo = () => {
                                             placeholder="Status"
                                             value={newPhaseDeliverable.status}
                                             onChange={(e) =>
-                                                setNewPhaseDeliverable({ ...newPhaseDeliverable, status: e.target.value })
+                                                setNewPhaseDeliverable({...newPhaseDeliverable, status: e.target.value})
                                             }
                                             className={styles.inputField}
                                         />
@@ -547,19 +551,37 @@ const ProjectInfo = () => {
                                             placeholder="Budget"
                                             value={newPhaseDeliverable.budget}
                                             onChange={(e) =>
-                                                setNewPhaseDeliverable({ ...newPhaseDeliverable, budget: e.target.value })
+                                                setNewPhaseDeliverable({...newPhaseDeliverable, budget: e.target.value})
                                             }
                                             className={styles.inputField}
                                         />
-                                        <button onClick={addPhaseDeliverable}>Add Deliverable</button>
+                                        <button onClick={addPhaseDeliverable} className={styles.primaryButton}>
+                                            <FaPlus className={styles.plusIcon}/> Add Deliverable
+                                        </button>
                                     </div>
                                 )}
 
-                                <button onClick={() => setShowPhaseDeliverableInput(!showPhaseDeliverableInput)}>
-                                    {showPhaseDeliverableInput ? 'Cancel' : 'Add Phase Deliverable'}
+
+                                <button
+                                    onClick={() => setShowPhaseDeliverableInput(!showPhaseDeliverableInput)}
+                                    className={styles.toggleButton}
+                                >
+                                    {showPhaseDeliverableInput ? (
+                                        <>
+                                            <FaTimes className={styles.icon}/>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FaPlus className={styles.icon}/>
+                                        </>
+                                    )}
                                 </button>
 
-                                <button onClick={() => setSelectedPhase(null)} className={styles.closeButtonTopRight}>
+
+                                <button
+                                    onClick={() => setSelectedPhase(null)}
+                                    className={styles.closeButtonTopRight}
+                                >
                                     ✕
                                 </button>
                             </div>
@@ -569,8 +591,9 @@ const ProjectInfo = () => {
                             onClick={() => setShowPhaseInput(!showPhaseInput)}
                             className={styles.addButton}
                         >
-                            <FaPlus /> {showPhaseInput ? 'Cancel' : 'Add Phase'}
+                            <FaPlus/> {showPhaseInput ? 'Cancel' : 'Add Phase'}
                         </button>
+
                         {showPhaseInput && (
                             <>
                                 <input
@@ -584,14 +607,12 @@ const ProjectInfo = () => {
                                     type="date"
                                     value={newPhase.startDate}
                                     onChange={(e) => setNewPhase({ ...newPhase, startDate: e.target.value })}
-                                    placeholder="Start Date"
                                     className={styles.inputField}
                                 />
                                 <input
                                     type="date"
                                     value={newPhase.endDate}
                                     onChange={(e) => setNewPhase({ ...newPhase, endDate: e.target.value })}
-                                    placeholder="End Date"
                                     className={styles.inputField}
                                 />
                                 <input
@@ -608,6 +629,7 @@ const ProjectInfo = () => {
                         )}
                     </div>
                 )}
+
 
 
 
