@@ -226,6 +226,22 @@ const ProjectInfo = () => {
         { month: 'Jul', Budget: 3490, Funding: 4300 },
     ];
 
+    const downloadBudgetCSV = (phase) => {
+        const headers = ['Deliverable Name', 'Budget'];
+        const rows = phase.deliverables.map(d => [d.name, d.budget]);
+
+        // Generate CSV content
+        let csvContent = headers.join(',') + '\n' +
+            rows.map(row => row.join(',')).join('\n');
+
+        // Create a downloadable link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${phase.name}_budget.csv`;
+        link.click();
+    };
+
     return (
         <div className={styles.projectInfoContainer}>
             {/* Sidebar Navigation */}
@@ -449,7 +465,7 @@ const ProjectInfo = () => {
                                     onClick={() => handlePhaseClick(index)}
                                 >
                                     <h3>{phase.name}</h3>
-                                    <p><strong>Start Date:</strong> {phase.startDate}</p>
+                                    <p><strong>Start Date:</strong> {phase.startDate} </p>
                                     <p><strong>End Date:</strong> {phase.endDate}</p>
                                     <p><strong>Status:</strong> {phase.status}</p>
                                     <div className={styles.cardActions}>
@@ -472,119 +488,174 @@ const ProjectInfo = () => {
                             ))}
                         </div>
 
-                        {/* Detailed view for selected phase */}
+                        {/* Phase Details View */}
                         {selectedPhase && (
-                            <div className={styles.phaseDetails}>
-                                <h3>Phase Details: {selectedPhase.name}</h3>
-                                <p><strong>Status:</strong> {selectedPhase.status}</p>
-                                <p><strong>Start Date:</strong> {selectedPhase.startDate}</p>
-                                <p><strong>End Date:</strong> {selectedPhase.endDate}</p>
-
-                                <h4>Phase Deliverables:</h4>
-                                <table className={styles.deliverableTable}>
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Status</th>
-                                        <th>Assignees</th>
-                                        <th>Budget ($)</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {selectedPhase.deliverables.map((deliverable, i) => (
-                                        <tr key={i}>
-                                            <td>{deliverable.name}</td>
-                                            <td>{deliverable.status}</td>
-                                            <td>{deliverable.assignees.join(', ')}</td>
-                                            <td>${deliverable.budget}</td>
-                                            <td className={styles.actionButtons}>
-                                                <button onClick={() => handleEditPhaseDeliverable(i)}
-                                                        className={styles.editButton}>
-                                                    Edit
-                                                </button>
-                                                <button onClick={() => handleDeletePhaseDeliverable(i)}
-                                                        className={styles.deleteButton}>
-                                                    Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
-
-                                {/* Add Phase Deliverable Form */}
-                                {showPhaseDeliverableInput && (
-                                    <div className={styles.newDeliverableForm}>
-                                        <input
-                                            type="text"
-                                            placeholder="Deliverable Name"
-                                            value={newPhaseDeliverable.name}
-                                            onChange={(e) =>
-                                                setNewPhaseDeliverable({...newPhaseDeliverable, name: e.target.value})
-                                            }
-                                            className={styles.inputField}
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Status"
-                                            value={newPhaseDeliverable.status}
-                                            onChange={(e) =>
-                                                setNewPhaseDeliverable({...newPhaseDeliverable, status: e.target.value})
-                                            }
-                                            className={styles.inputField}
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Assignees (comma-separated)"
-                                            value={newPhaseDeliverable.assignees}
-                                            onChange={(e) =>
-                                                setNewPhaseDeliverable({
-                                                    ...newPhaseDeliverable,
-                                                    assignees: e.target.value.split(',').map(a => a.trim()),
-                                                })
-                                            }
-                                            className={styles.inputField}
-                                        />
-                                        <input
-                                            type="number"
-                                            placeholder="Budget"
-                                            value={newPhaseDeliverable.budget}
-                                            onChange={(e) =>
-                                                setNewPhaseDeliverable({...newPhaseDeliverable, budget: e.target.value})
-                                            }
-                                            className={styles.inputField}
-                                        />
-                                        <button onClick={addPhaseDeliverable} className={styles.primaryButton}>
-                                            <FaPlus className={styles.plusIcon}/> Add Deliverable
+                            <>
+                                <div className={styles.overlay} onClick={() => setSelectedPhase(null)} />
+                                <div className={styles.phaseDetails}>
+                                    <button
+                                        className={styles.closeButtonTopRight}
+                                        onClick={() => setSelectedPhase(null)}
+                                    >
+                                        ✕
+                                    </button>
+                                    <h3>Phase Details: {selectedPhase.name}</h3>
+                                    <div className={styles.phaseInfoRow}>
+                                        <p><strong>Status:</strong> {selectedPhase.status}</p>
+                                        <p><strong>Start:</strong> {selectedPhase.startDate}</p>
+                                        <p><strong>End:</strong> {selectedPhase.endDate}</p>
+                                        <button
+                                            className={styles.updateButton}
+                                            onClick={() => editPhase(selectedPhase)}
+                                        >
+                                            Update
                                         </button>
                                     </div>
-                                )}
 
+                                    <h4>Phase Deliverables:</h4>
+                                    <table className={styles.deliverableTable}>
+                                        <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Status</th>
+                                            <th>Assignees</th>
+                                            <th>Budget ($)</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {selectedPhase.deliverables.map((deliverable, i) => (
+                                            <tr key={i}>
+                                                <td>{deliverable.name}</td>
+                                                <td>{deliverable.status}</td>
+                                                <td>{deliverable.assignees.join(', ')}</td>
+                                                <td>${deliverable.budget}</td>
+                                                <td className={styles.actionButtons}>
+                                                    <button
+                                                        onClick={() => handleEditPhaseDeliverable(i)}
+                                                        className={styles.editButton}
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeletePhaseDeliverable(i)}
+                                                        className={styles.deleteButton}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
 
-                                <button
-                                    onClick={() => setShowPhaseDeliverableInput(!showPhaseDeliverableInput)}
-                                    className={styles.toggleButton}
-                                >
-                                    {showPhaseDeliverableInput ? (
-                                        <>
-                                            <FaTimes className={styles.icon}/>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <FaPlus className={styles.icon}/>
-                                        </>
+                                    {/* Add Deliverable Form */}
+                                    {showPhaseDeliverableInput && (
+                                        <div className={styles.newDeliverableForm}>
+                                            <input
+                                                type="text"
+                                                placeholder="Deliverable Name"
+                                                value={newPhaseDeliverable.name}
+                                                onChange={(e) =>
+                                                    setNewPhaseDeliverable({
+                                                        ...newPhaseDeliverable,
+                                                        name: e.target.value,
+                                                    })
+                                                }
+                                                className={styles.inputField}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Status"
+                                                value={newPhaseDeliverable.status}
+                                                onChange={(e) =>
+                                                    setNewPhaseDeliverable({
+                                                        ...newPhaseDeliverable,
+                                                        status: e.target.value,
+                                                    })
+                                                }
+                                                className={styles.inputField}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Assignees (comma-separated)"
+                                                value={newPhaseDeliverable.assignees}
+                                                onChange={(e) =>
+                                                    setNewPhaseDeliverable({
+                                                        ...newPhaseDeliverable,
+                                                        assignees: e.target.value.split(',').map(a => a.trim()),
+                                                    })
+                                                }
+                                                className={styles.inputField}
+                                            />
+                                            <input
+                                                type="number"
+                                                placeholder="Budget"
+                                                value={newPhaseDeliverable.budget}
+                                                onChange={(e) =>
+                                                    setNewPhaseDeliverable({
+                                                        ...newPhaseDeliverable,
+                                                        budget: e.target.value,
+                                                    })
+                                                }
+                                                className={styles.inputField}
+                                            />
+                                            <button
+                                                onClick={addPhaseDeliverable}
+                                                className={styles.primaryButton}
+                                            >
+                                                <FaPlus className={styles.plusIcon}/> Add Deliverable
+                                            </button>
+                                        </div>
                                     )}
-                                </button>
 
+                                    <button
+                                        onClick={() =>
+                                            setShowPhaseDeliverableInput(!showPhaseDeliverableInput)
+                                        }
+                                        className={styles.toggleButton}
+                                    >
+                                        {showPhaseDeliverableInput ? <FaTimes/> : <FaPlus/>}
+                                    </button>
 
-                                <button
-                                    onClick={() => setSelectedPhase(null)}
-                                    className={styles.closeButtonTopRight}
-                                >
-                                    ✕
-                                </button>
-                            </div>
+                                    {/* Budget Summary */}
+                                    <h4>Budget Summary</h4>
+                                    <table className={styles.budgetTable}>
+                                        <thead>
+                                        <tr>
+                                            <th>Deliverable</th>
+                                            <th>Budget ($)</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {selectedPhase.deliverables.map((deliverable, i) => (
+                                            <tr key={i}>
+                                                <td>{deliverable.name}</td>
+                                                <td>${deliverable.budget}</td>
+                                            </tr>
+                                        ))}
+                                        <tr className={styles.totalRow}>
+                                            <td><strong>Total Budget</strong></td>
+                                            <td>
+                                                <strong>
+                                                    ${selectedPhase.deliverables.reduce(
+                                                    (sum, d) => sum + parseFloat(d.budget || 0),
+                                                    0
+                                                )}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <button
+                                        onClick={() => downloadBudgetCSV(selectedPhase)}
+                                        className={styles.downloadButton}
+                                    >
+                                        Download Budget CSV
+                                    </button>
+                                </div>
+                            </>
                         )}
 
                         <button
@@ -599,26 +670,34 @@ const ProjectInfo = () => {
                                 <input
                                     type="text"
                                     value={newPhase.name}
-                                    onChange={(e) => setNewPhase({ ...newPhase, name: e.target.value })}
+                                    onChange={(e) =>
+                                        setNewPhase({ ...newPhase, name: e.target.value })
+                                    }
                                     placeholder="Phase Name"
                                     className={styles.inputField}
                                 />
                                 <input
                                     type="date"
                                     value={newPhase.startDate}
-                                    onChange={(e) => setNewPhase({ ...newPhase, startDate: e.target.value })}
+                                    onChange={(e) =>
+                                        setNewPhase({ ...newPhase, startDate: e.target.value })
+                                    }
                                     className={styles.inputField}
                                 />
                                 <input
                                     type="date"
                                     value={newPhase.endDate}
-                                    onChange={(e) => setNewPhase({ ...newPhase, endDate: e.target.value })}
+                                    onChange={(e) =>
+                                        setNewPhase({ ...newPhase, endDate: e.target.value })
+                                    }
                                     className={styles.inputField}
                                 />
                                 <input
                                     type="text"
                                     value={newPhase.status}
-                                    onChange={(e) => setNewPhase({ ...newPhase, status: e.target.value })}
+                                    onChange={(e) =>
+                                        setNewPhase({ ...newPhase, status: e.target.value })
+                                    }
                                     placeholder="Status"
                                     className={styles.inputField}
                                 />

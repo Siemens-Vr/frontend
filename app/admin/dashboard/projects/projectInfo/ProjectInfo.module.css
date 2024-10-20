@@ -519,3 +519,64 @@
 .icon {
     font-size: 15px;
 }
+
+
+.budgetTable {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+}
+
+.budgetTable th, .budgetTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.totalRow td {
+    font-weight: bold;
+    background-color: #1a253a;
+}
+
+.downloadButton {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.downloadButton:hover {
+    background-color: #45a049;
+}
+
+.phaseInfoRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.phaseInfoRow p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.updateButton {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.updateButton:hover {
+    background-color: #45a049;
+}
