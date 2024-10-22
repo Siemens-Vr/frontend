@@ -1,19 +1,22 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useSearchParams } from 'next/navigation';
 import styles from './ProjectInfo.module.css';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import {
     FaUsers,
-
+    FaRegFileAlt,
     FaTasks,
     FaRegChartBar,
     FaCalendarAlt,
     FaDollarSign,
     FaEdit,
+    FaUpload,
+    FaFolder,
     FaTrash,
+    FaArrowLeft,
     FaPlus, FaTimes
 } from 'react-icons/fa';
 import {
@@ -25,6 +28,9 @@ import {
     Tooltip,
     ResponsiveContainer
 } from 'recharts';
+
+
+
 
 const ProjectInfo = () => {
     const searchParams = useSearchParams();
@@ -43,6 +49,7 @@ const ProjectInfo = () => {
     ]);
 
     const [deliverables, setDeliverables] = useState(['Initial Setup', 'Feature Development', 'Testing']);
+
 
     const [phases, setPhases] = useState([
         {
@@ -146,10 +153,10 @@ const ProjectInfo = () => {
     const deletePhase = (index) => setPhases(phases.filter((_, i) => i !== index));
 
     const editPhase = (index) => {
-        const editedName = prompt('Edit Phase Name:', phases[index].name);
+        const editedName = prompt('Edit Phase Name:');
         if (editedName) {
             const updated = [...phases];
-            updated[index].name = editedName.trim();
+            updated[index].name = editedName;
             setPhases(updated);
         }
     };
@@ -242,6 +249,143 @@ const ProjectInfo = () => {
         link.click();
     };
 
+    useEffect(() => {
+        if (selectedPhase) {
+            document.body.classList.add('noScroll');
+        } else {
+            document.body.classList.remove('noScroll');
+        }
+
+        return () => {
+            document.body.classList.remove('noScroll');
+        };
+    }, [selectedPhase]);
+
+
+    let projectDetails, setProjectDetails;
+    // eslint-disable-next-line no-unused-vars
+    [projectDetails, setProjectDetails] = useState({
+        name: '',
+        description: '',
+        status: '',
+        budget: '',
+        funding: '',
+        startDate: '',
+        endDate: '',
+        assignees: [
+            {
+                name: '',
+                gender: '',
+                access: '',
+                role: '',
+                dateJoined: '',
+            },
+        ],
+
+        phases: [
+            {
+                name: '',
+                startDate: '',
+                endDate: '',
+                status: '',
+                deliverables: [
+                    {
+                        name: '',
+                        status: '',
+                        budget: 0,
+                        assignees: [
+                            {
+                                name: '',
+                                gender: '',
+                                access: '',
+                                role: '',
+                                dateJoined: '',
+                            },
+                        ],
+                        startDate: '',
+                        expectedFinish: '',
+                    },
+                ],
+            },
+        ],
+    });
+
+    const [folders, setFolders] = useState([]); // Root-level folders
+    const [isFolderModalOpen, setFolderModalOpen] = useState(false);
+    const [isFileModalOpen, setFileModalOpen] = useState(false);
+    const [folderName, setFolderName] = useState('');
+    const [folderDescription, setFolderDescription] = useState('');
+    const [currentFolder, setCurrentFolder] = useState(null); // Current folder context
+
+// Helper to create a folder
+    const handleCreateFolder = () => {
+        if (!folderName.trim()) return alert('Folder name is required.');
+
+        const newFolder = {
+            name: folderName,
+            description: folderDescription,
+            files: [],
+            subfolders: [],
+        };
+
+        if (currentFolder) {
+            currentFolder.subfolders.push(newFolder); // Add to the current folder
+            setCurrentFolder({ ...currentFolder }); // Trigger re-render
+        } else {
+            setFolders([...folders, newFolder]); // Add to the root level
+        }
+
+        setFolderName('');
+        setFolderDescription('');
+        setFolderModalOpen(false); // Close the modal
+    };
+
+// Handle file upload to the current folder
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const fileName = prompt('Enter file name (optional) or press OK to use the original:', file.name);
+        const fileDescription = prompt('Enter a description (optional):', '');
+
+        const newFile = {
+            name: fileName || file.name,
+            description: fileDescription || '',
+            url: URL.createObjectURL(file),
+        };
+
+        if (currentFolder) {
+            currentFolder.files.push(newFile);
+            setCurrentFolder({ ...currentFolder });
+        }
+        setFileModalOpen(false); // Close the modal
+    };
+
+// Navigate to a folder
+    const handleOpenFolder = (folder) => {
+        setCurrentFolder(folder);
+    };
+
+// Navigate back to the parent folder
+    const handleBackToParent = () => {
+        const parent = findParentFolder(currentFolder, folders);
+        setCurrentFolder(parent || null);
+    };
+
+// Helper to find a folder's parent
+    const findParentFolder = (child, folderList) => {
+        for (const folder of folderList) {
+            if (folder.subfolders.includes(child)) return folder;
+            const found = findParentFolder(child, folder.subfolders);
+            if (found) return found;
+        }
+        return null;
+    };
+
+
+
+
+
     return (
         <div className={styles.projectInfoContainer}>
             {/* Sidebar Navigation */}
@@ -252,35 +396,44 @@ const ProjectInfo = () => {
                         className={`${styles.navItem} ${activeSection === 'details' ? styles.active : ''}`}
                         onClick={() => setActiveSection('details')}
                     >
-                        <FaUsers className={styles.icon} />
+                        <FaUsers className={styles.icon}/>
                         Project Details
                     </li>
                     <li
                         className={`${styles.navItem} ${activeSection === 'assignees' ? styles.active : ''}`}
                         onClick={() => setActiveSection('assignees')}
                     >
-                        <FaUsers className={styles.icon} />
+                        <FaUsers className={styles.icon}/>
                         Assignees
                     </li>
                     <li
                         className={`${styles.navItem} ${activeSection === 'deliverables' ? styles.active : ''}`}
                         onClick={() => setActiveSection('deliverables')}
                     >
-                        <FaTasks className={styles.icon} />
+                        <FaTasks className={styles.icon}/>
                         Deliverables
                     </li>
                     <li
                         className={`${styles.navItem} ${activeSection === 'phases' ? styles.active : ''}`}
                         onClick={() => setActiveSection('phases')}
                     >
-                        <FaRegChartBar className={styles.icon} />
+                        <FaRegChartBar className={styles.icon}/>
                         Phases
                     </li>
+                    <li
+                        className={`${styles.navItem} ${activeSection === 'documents' ? styles.active : ''}`}
+                        onClick={() => setActiveSection('documents')}
+                    >
+                        <FaRegFileAlt className={styles.icon}/> {/* Option 1 */}
+                        {/* <AiOutlineFile className={styles.icon} /> */} {/* Option 2 */}
+                        Documents
+                    </li>
+
                     <li
                         className={`${styles.navItem} ${activeSection === 'calendar' ? styles.active : ''}`}
                         onClick={() => setActiveSection('calendar')}
                     >
-                        <FaCalendarAlt className={styles.icon} />
+                        <FaCalendarAlt className={styles.icon}/>
                         Calendar
                     </li>
                 </ul>
@@ -290,7 +443,8 @@ const ProjectInfo = () => {
             <div className={styles.mainContent}>
                 {/* Navbar */}
                 <div className={styles.navbar}>
-                    <h1 className={styles.projectName} onClick={() => setActiveSection('details')} style={{ cursor: 'pointer' }}>
+                    <h1 className={styles.projectName} onClick={() => setActiveSection('details')}
+                        style={{cursor: 'pointer'}}>
                         {projectName}
                     </h1>
                 </div>
@@ -322,6 +476,126 @@ const ProjectInfo = () => {
                     </div>
                 )}
 
+                {activeSection === 'documents' && (
+                    <div className={styles.inputDocumentSection}>
+                        {/* Top-right buttons */}
+                        <div className={styles.inputDocumentButtonsContainer}>
+                            <button onClick={() => setFolderModalOpen(true)}>
+                                <FaPlus /> Create Folder
+                            </button>
+                            <button onClick={() => setFileModalOpen(true)}>
+                                <FaUpload /> Upload File
+                            </button>
+                        </div>
+
+                        {/* Folder Creation Modal */}
+                        {isFolderModalOpen && (
+                            <div className={styles.inputDocumentModal}>
+                                <div className={styles.inputDocumentModalContent}>
+                                    <h2>Create Folder</h2>
+                                    <input
+                                        type="text"
+                                        placeholder="Folder Name"
+                                        value={folderName}
+                                        onChange={(e) => setFolderName(e.target.value)}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Description (Optional)"
+                                        value={folderDescription}
+                                        onChange={(e) => setFolderDescription(e.target.value)}
+                                    />
+                                    <div className={styles.inputDocumentModalButtons}>
+                                        <button onClick={handleCreateFolder}>Create</button>
+                                        <button onClick={() => setFolderModalOpen(false)}>Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* File Upload Modal */}
+                        {isFileModalOpen && (
+                            <div className={styles.inputDocumentModal}>
+                                <div className={styles.inputDocumentModalContent}>
+                                    <h2>Upload File</h2>
+                                    <input type="file" onChange={handleFileUpload} />
+                                    <div className={styles.inputDocumentModalButtons}>
+                                        <button onClick={() => setFileModalOpen(false)}>Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Render Content */}
+                        <div className={styles.inputDocumentCardsContainer}>
+                            {currentFolder ? (
+                                <>
+                                    {/* Back Button */}
+                                    <button
+                                        className={styles.inputDocumentBackButton}
+                                        onClick={handleBackToParent}
+                                    >
+                                        <FaArrowLeft /> Back
+                                    </button>
+
+                                    <h2>{currentFolder.name}</h2>
+                                    <p>{currentFolder.description}</p>
+
+                                    {/* Subfolders */}
+                                    {currentFolder.subfolders.map((folder, index) => (
+                                        <div
+                                            key={index}
+                                            className={styles.inputDocumentCard}
+                                            onClick={() => handleOpenFolder(folder)}
+                                        >
+                                            <FaFolder className={styles.inputDocumentCardIcon} />
+                                            <h3>{folder.name}</h3>
+                                            {folder.description && <p>{folder.description}</p>}
+                                        </div>
+                                    ))}
+
+                                    {/* Files */}
+                                    {currentFolder.files.map((file, index) => (
+                                        <div key={index} className={styles.inputDocumentCard}>
+                                            <FaRegFileAlt className={styles.inputDocumentCardIcon} />
+                                            <a
+                                                href={file.url}
+                                                download={file.name}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {file.name}
+                                            </a>
+                                            {file.description && <p>{file.description}</p>}
+                                        </div>
+                                    ))}
+                                </>
+                            ) : (
+                                <>
+                                    {folders.length === 0 ? (
+                                        <p>No folders or files available.</p>
+                                    ) : (
+                                        folders.map((folder, index) => (
+                                            <div
+                                                key={index}
+                                                className={styles.inputDocumentCard}
+                                                onClick={() => handleOpenFolder(folder)}
+                                            >
+                                                <FaFolder className={styles.inputDocumentCardIcon} />
+                                                <h3>{folder.name}</h3>
+                                                {folder.description && <p>{folder.description}</p>}
+                                            </div>
+                                        ))
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+
+
+
                 {/* Assignees Section */}
                 {activeSection === 'assignees' && (
                     <div className={styles.assignees}>
@@ -351,6 +625,7 @@ const ProjectInfo = () => {
                             {assignees.map((assignee, index) => (
                                 <tr key={index}>
                                     <td>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img
                                             src={`https://i.pravatar.cc/150?img=${index + 1}`}
                                             alt="Profile"
@@ -488,7 +763,6 @@ const ProjectInfo = () => {
                             ))}
                         </div>
 
-                        {/* Phase Details View */}
                         {selectedPhase && (
                             <>
                                 <div className={styles.overlay} onClick={() => setSelectedPhase(null)} />
@@ -499,164 +773,165 @@ const ProjectInfo = () => {
                                     >
                                         ✕
                                     </button>
-                                    <h3>Phase Details: {selectedPhase.name}</h3>
-                                    <div className={styles.phaseInfoRow}>
-                                        <p><strong>Status:</strong> {selectedPhase.status}</p>
-                                        <p><strong>Start:</strong> {selectedPhase.startDate}</p>
-                                        <p><strong>End:</strong> {selectedPhase.endDate}</p>
-                                        <button
-                                            className={styles.updateButton}
-                                            onClick={() => editPhase(selectedPhase)}
-                                        >
-                                            Update
-                                        </button>
-                                    </div>
-
-                                    <h4>Phase Deliverables:</h4>
-                                    <table className={styles.deliverableTable}>
-                                        <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Status</th>
-                                            <th>Assignees</th>
-                                            <th>Budget ($)</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {selectedPhase.deliverables.map((deliverable, i) => (
-                                            <tr key={i}>
-                                                <td>{deliverable.name}</td>
-                                                <td>{deliverable.status}</td>
-                                                <td>{deliverable.assignees.join(', ')}</td>
-                                                <td>${deliverable.budget}</td>
-                                                <td className={styles.actionButtons}>
-                                                    <button
-                                                        onClick={() => handleEditPhaseDeliverable(i)}
-                                                        className={styles.editButton}
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDeletePhaseDeliverable(i)}
-                                                        className={styles.deleteButton}
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                        </tbody>
-                                    </table>
-
-                                    {/* Add Deliverable Form */}
-                                    {showPhaseDeliverableInput && (
-                                        <div className={styles.newDeliverableForm}>
-                                            <input
-                                                type="text"
-                                                placeholder="Deliverable Name"
-                                                value={newPhaseDeliverable.name}
-                                                onChange={(e) =>
-                                                    setNewPhaseDeliverable({
-                                                        ...newPhaseDeliverable,
-                                                        name: e.target.value,
-                                                    })
-                                                }
-                                                className={styles.inputField}
-                                            />
-                                            <input
-                                                type="text"
-                                                placeholder="Status"
-                                                value={newPhaseDeliverable.status}
-                                                onChange={(e) =>
-                                                    setNewPhaseDeliverable({
-                                                        ...newPhaseDeliverable,
-                                                        status: e.target.value,
-                                                    })
-                                                }
-                                                className={styles.inputField}
-                                            />
-                                            <input
-                                                type="text"
-                                                placeholder="Assignees (comma-separated)"
-                                                value={newPhaseDeliverable.assignees}
-                                                onChange={(e) =>
-                                                    setNewPhaseDeliverable({
-                                                        ...newPhaseDeliverable,
-                                                        assignees: e.target.value.split(',').map(a => a.trim()),
-                                                    })
-                                                }
-                                                className={styles.inputField}
-                                            />
-                                            <input
-                                                type="number"
-                                                placeholder="Budget"
-                                                value={newPhaseDeliverable.budget}
-                                                onChange={(e) =>
-                                                    setNewPhaseDeliverable({
-                                                        ...newPhaseDeliverable,
-                                                        budget: e.target.value,
-                                                    })
-                                                }
-                                                className={styles.inputField}
-                                            />
+                                    <div className={styles.phaseDetailsContent}>
+                                        <h3>Phase Details: {selectedPhase.name}</h3>
+                                        <div className={styles.phaseInfoRow}>
+                                            <p><strong>Status:</strong> {selectedPhase.status}</p>
+                                            <p><strong>Start:</strong> {selectedPhase.startDate}</p>
+                                            <p><strong>End:</strong> {selectedPhase.endDate}</p>
                                             <button
-                                                onClick={addPhaseDeliverable}
-                                                className={styles.primaryButton}
+                                                className={styles.updateButton}
+                                                onClick={() => editPhase(selectedPhase)}
                                             >
-                                                <FaPlus className={styles.plusIcon}/> Add Deliverable
+                                                Update
                                             </button>
                                         </div>
-                                    )}
 
-                                    <button
-                                        onClick={() =>
-                                            setShowPhaseDeliverableInput(!showPhaseDeliverableInput)
-                                        }
-                                        className={styles.toggleButton}
-                                    >
-                                        {showPhaseDeliverableInput ? <FaTimes/> : <FaPlus/>}
-                                    </button>
-
-                                    {/* Budget Summary */}
-                                    <h4>Budget Summary</h4>
-                                    <table className={styles.budgetTable}>
-                                        <thead>
-                                        <tr>
-                                            <th>Deliverable</th>
-                                            <th>Budget ($)</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {selectedPhase.deliverables.map((deliverable, i) => (
-                                            <tr key={i}>
-                                                <td>{deliverable.name}</td>
-                                                <td>${deliverable.budget}</td>
+                                        <h4>Phase Deliverables:</h4>
+                                        <table className={styles.deliverableTable}>
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Status</th>
+                                                <th>Assignees</th>
+                                                <th>Budget ($)</th>
+                                                <th>Actions</th>
                                             </tr>
-                                        ))}
-                                        <tr className={styles.totalRow}>
-                                            <td><strong>Total Budget</strong></td>
-                                            <td>
-                                                <strong>
-                                                    ${selectedPhase.deliverables.reduce(
-                                                    (sum, d) => sum + parseFloat(d.budget || 0),
-                                                    0
-                                                )}
-                                                </strong>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                            {selectedPhase.deliverables.map((deliverable, i) => (
+                                                <tr key={i}>
+                                                    <td>{deliverable.name}</td>
+                                                    <td>{deliverable.status}</td>
+                                                    <td>{deliverable.assignees.join(', ')}</td>
+                                                    <td>${deliverable.budget}</td>
+                                                    <td className={styles.actionButtons}>
+                                                        <button
+                                                            onClick={() => handleEditPhaseDeliverable(i)}
+                                                            className={styles.editButton}
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeletePhaseDeliverable(i)}
+                                                            className={styles.deleteButton}
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            </tbody>
+                                        </table>
 
-                                    <button
-                                        onClick={() => downloadBudgetCSV(selectedPhase)}
-                                        className={styles.downloadButton}
-                                    >
-                                        Download Budget CSV
-                                    </button>
+                                        {showPhaseDeliverableInput && (
+                                            <div className={styles.newDeliverableForm}>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Deliverable Name"
+                                                    value={newPhaseDeliverable.name}
+                                                    onChange={(e) =>
+                                                        setNewPhaseDeliverable({
+                                                            ...newPhaseDeliverable,
+                                                            name: e.target.value,
+                                                        })
+                                                    }
+                                                    className={styles.inputField}
+                                                />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Status"
+                                                    value={newPhaseDeliverable.status}
+                                                    onChange={(e) =>
+                                                        setNewPhaseDeliverable({
+                                                            ...newPhaseDeliverable,
+                                                            status: e.target.value,
+                                                        })
+                                                    }
+                                                    className={styles.inputField}
+                                                />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Assignees (comma-separated)"
+                                                    value={newPhaseDeliverable.assignees}
+                                                    onChange={(e) =>
+                                                        setNewPhaseDeliverable({
+                                                            ...newPhaseDeliverable,
+                                                            assignees: e.target.value.split(',').map(a => a.trim()),
+                                                        })
+                                                    }
+                                                    className={styles.inputField}
+                                                />
+                                                <input
+                                                    type="number"
+                                                    placeholder="Budget"
+                                                    value={newPhaseDeliverable.budget}
+                                                    onChange={(e) =>
+                                                        setNewPhaseDeliverable({
+                                                            ...newPhaseDeliverable,
+                                                            budget: e.target.value,
+                                                        })
+                                                    }
+                                                    className={styles.inputField}
+                                                />
+                                                <button
+                                                    onClick={addPhaseDeliverable}
+                                                    className={styles.primaryButton}
+                                                >
+                                                    <FaPlus className={styles.plusIcon}/> Add Deliverable
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        <button
+                                            onClick={() =>
+                                                setShowPhaseDeliverableInput(!showPhaseDeliverableInput)
+                                            }
+                                            className={styles.toggleButton}
+                                        >
+                                            {showPhaseDeliverableInput ? <FaTimes/> : <FaPlus/>}
+                                        </button>
+
+                                        <h4>Budget Summary</h4>
+                                        <table className={styles.budgetTable}>
+                                            <thead>
+                                            <tr>
+                                                <th>Deliverable</th>
+                                                <th>Budget ($)</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {selectedPhase.deliverables.map((deliverable, i) => (
+                                                <tr key={i}>
+                                                    <td>{deliverable.name}</td>
+                                                    <td>${deliverable.budget}</td>
+                                                </tr>
+                                            ))}
+                                            <tr className={styles.totalRow}>
+                                                <td><strong>Total Budget</strong></td>
+                                                <td>
+                                                    <strong>
+                                                        ${selectedPhase.deliverables.reduce(
+                                                        (sum, d) => sum + parseFloat(d.budget || 0),
+                                                        0
+                                                    )}
+                                                    </strong>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <button
+                                            onClick={() => downloadBudgetCSV(selectedPhase)}
+                                            className={styles.downloadButton}
+                                        >
+                                            Download Budget CSV
+                                        </button>
+                                    </div>
                                 </div>
                             </>
                         )}
+
 
                         <button
                             onClick={() => setShowPhaseInput(!showPhaseInput)}

@@ -282,57 +282,6 @@
     color: #ff4d4f;
 }
 
-/* Detailed Phase View */
-.phaseDetails {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #080f1b;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    width: 80%;
-    height: 80%;
-    max-width: 900px;
-    max-height: 900px;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-.phaseDetails h3 {
-    margin-top: 0;
-    color: #1e90ff;
-    margin-bottom: 15px;
-}
-
-.phaseDetails p {
-    margin: 5px 0;
-    color: var(--text);
-}
-
-.phaseDetails h4 {
-    margin-top: 20px;
-    color: #1e90ff;
-    margin-bottom: 10px;
-}
-
-.phaseDetails ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.phaseDetails li {
-    background-color: #1a253a;
-    padding: 10px 15px;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.phaseDetails li strong {
-    color: #1e90ff;
-}
 
 .closeButton {
     display: inline-flex;
@@ -580,3 +529,204 @@
 .updateButton:hover {
     background-color: #45a049;
 }
+
+
+/* Phase Details View */
+.phaseDetails {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #080f1b;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 900px;
+    height: 80%;
+    max-height: 90%; /* Ensures it doesn't exceed the viewport */
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Scrollable content inside the phaseDetails */
+.phaseDetailsContent {
+    flex: 1; /* Ensures this section grows to take available space */
+    overflow-y: auto; /* Enables vertical scrolling */
+    padding: 20px;
+}
+
+.phaseDetails h3 {
+    margin-top: 0;
+    color: #1e90ff;
+    margin-bottom: 15px;
+}
+
+.phaseInfoRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.phaseInfoRow p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.closeButtonTopRight {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #ff6347;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.closeButtonTopRight:hover {
+    color: #ff4500;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Smooth scrolling animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.noScroll {
+    overflow: hidden;
+}
+
+
+.inputDocumentSection {
+    padding: 20px;
+}
+
+/* Button Container Styles */
+.inputDocumentButtonsContainer {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 15px; /* Space between buttons */
+    margin-bottom: 20px;
+}
+
+/* Button Styles */
+.button {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    background-color: #007bff; /* Primary button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s, transform 0.2s; /* Transition for hover effects */
+    font-size: 14px; /* Font size */
+    font-weight: bold; /* Bold text */
+}
+
+.button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+/* Card Container Styles */
+.inputDocumentCardsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+/* Card Styles */
+.inputDocumentCard {
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px; /* Inner spacing */
+    text-align: center; /* Center content */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: transform 0.2s, box-shadow 0.2s; /* Transition for hover effects */
+}
+
+.inputDocumentCard:hover {
+    transform: scale(1.05); /* Scale effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+/* Card Icon Styles */
+.inputDocumentCardIcon {
+    font-size: 40px; /* Large icon */
+    margin-bottom: 10px; /* Space below the icon */
+    color: #1e90ff; /* Icon color */
+}
+
+/* Modal Styles */
+.inputDocumentModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Overlay effect */
+    display: flex;
+    justify-content: center; /* Center modal */
+    align-items: center; /* Center modal */
+}
+
+.inputDocumentModalContent {
+    background: white; /* Modal background */
+    padding: 20px; /* Inner spacing */
+    border-radius: 8px; /* Rounded corners */
+    width: 300px; /* Fixed width */
+    text-align: center; /* Center content */
+}
+
+/* Input Styles */
+.input {
+    margin: 10px 0; /* Vertical margin */
+    padding: 8px; /* Inner spacing */
+    width: 100%; /* Full width */
+}
+
+/* Modal Button Styles */
+.inputDocumentModalButtons {
+    display: flex;
+    justify-content: space-between; /* Space buttons */
+    margin-top: 10px; /* Top margin */
+}
+
+/* Back Button Styles */
+.inputDocumentBackButton {
+    margin-bottom: 15px; /* Bottom margin */
+    padding: 8px 12px; /* Inner spacing */
+    background-color: #6c757d; /* Secondary color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+}
+
