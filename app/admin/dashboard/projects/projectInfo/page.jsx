@@ -17,6 +17,7 @@ import {
     FaFolder,
     FaTrash,
     FaArrowLeft,
+    FaEllipsisV,
     FaPlus, FaTimes
 } from 'react-icons/fa';
 import {
@@ -316,12 +317,14 @@ const ProjectInfo = () => {
     const [folderName, setFolderName] = useState('');
     const [folderDescription, setFolderDescription] = useState('');
     const [currentFolder, setCurrentFolder] = useState(null); // Current folder context
+    const [showOptions, setShowOptions] = useState({}); // Track open menus
 
-// Helper to create a folder
+    // Helper to create a folder
     const handleCreateFolder = () => {
         if (!folderName.trim()) return alert('Folder name is required.');
 
         const newFolder = {
+            id: Date.now(), // Unique ID
             name: folderName,
             description: folderDescription,
             files: [],
@@ -329,18 +332,21 @@ const ProjectInfo = () => {
         };
 
         if (currentFolder) {
-            currentFolder.subfolders.push(newFolder); // Add to the current folder
-            setCurrentFolder({ ...currentFolder }); // Trigger re-render
+            const updatedFolder = {
+                ...currentFolder,
+                subfolders: [...currentFolder.subfolders, newFolder],
+            };
+            updateFolderInHierarchy(currentFolder.id, updatedFolder);
         } else {
-            setFolders([...folders, newFolder]); // Add to the root level
+            setFolders([...folders, newFolder]);
         }
 
         setFolderName('');
         setFolderDescription('');
-        setFolderModalOpen(false); // Close the modal
+        setFolderModalOpen(false);
     };
 
-// Handle file upload to the current folder
+    // Handle file upload to the current folder
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -349,30 +355,45 @@ const ProjectInfo = () => {
         const fileDescription = prompt('Enter a description (optional):', '');
 
         const newFile = {
+            id: Date.now(), // Unique ID
             name: fileName || file.name,
             description: fileDescription || '',
             url: URL.createObjectURL(file),
         };
 
         if (currentFolder) {
-            currentFolder.files.push(newFile);
-            setCurrentFolder({ ...currentFolder });
+            const updatedFolder = {
+                ...currentFolder,
+                files: [...currentFolder.files, newFile],
+            };
+            updateFolderInHierarchy(currentFolder.id, updatedFolder);
         }
-        setFileModalOpen(false); // Close the modal
+        setFileModalOpen(false);
     };
 
-// Navigate to a folder
-    const handleOpenFolder = (folder) => {
-        setCurrentFolder(folder);
+    // Helper to update a folder in the hierarchy
+    const updateFolderInHierarchy = (folderId, updatedFolder) => {
+        const updateFolders = (folders) =>
+            folders.map((folder) =>
+                folder.id === folderId
+                    ? updatedFolder
+                    : { ...folder, subfolders: updateFolders(folder.subfolders) }
+            );
+
+        setFolders((prevFolders) => updateFolders(prevFolders));
+        setCurrentFolder(updatedFolder); // Ensure UI reflects the change
     };
 
-// Navigate back to the parent folder
+    // Navigate to a folder
+    const handleOpenFolder = (folder) => setCurrentFolder(folder);
+
+    // Navigate back to the parent folder
     const handleBackToParent = () => {
         const parent = findParentFolder(currentFolder, folders);
         setCurrentFolder(parent || null);
     };
 
-// Helper to find a folder's parent
+    // Helper to find a folder's parent
     const findParentFolder = (child, folderList) => {
         for (const folder of folderList) {
             if (folder.subfolders.includes(child)) return folder;
@@ -381,6 +402,49 @@ const ProjectInfo = () => {
         }
         return null;
     };
+
+    // Toggle options for a folder or file
+    const toggleOptions = (e, id) => {
+        e.stopPropagation(); // Prevent folder click
+        setShowOptions((prev) => ({
+            ...prev,
+            [id]: !prev[id],
+        }));
+    };
+
+    // Handle folder or file edits
+    const handleEdit = (item) => {
+        const newName = prompt("Enter new name:", item.name);
+        const newDescription = prompt("Enter new description:", item.description || "");
+
+        if (newName || newDescription) {
+            const updatedItem = { ...item, name: newName, description: newDescription };
+            if (item.files) {
+                updateFolderInHierarchy(item.id, updatedItem);
+            } else {
+                const updatedFiles = currentFolder.files.map((f) =>
+                    f.id === item.id ? updatedItem : f
+                );
+                setCurrentFolder({ ...currentFolder, files: updatedFiles });
+            }
+        }
+    };
+
+    // Handle delete operations
+    const handleDeleteFolder = (folder) => {
+        if (window.confirm(`Delete folder "${folder.name}"?`)) {
+            setFolders((prev) => prev.filter((f) => f.id !== folder.id));
+        }
+    };
+
+    const handleDeleteFile = (file) => {
+        if (window.confirm(`Delete file "${file.name}"?`)) {
+            const updatedFiles = currentFolder.files.filter((f) => f.id !== file.id);
+            setCurrentFolder({ ...currentFolder, files: updatedFiles });
+        }
+    };
+
+
 
 
 
@@ -478,14 +542,28 @@ const ProjectInfo = () => {
 
                 {activeSection === 'documents' && (
                     <div className={styles.inputDocumentSection}>
-                        {/* Top-right buttons */}
-                        <div className={styles.inputDocumentButtonsContainer}>
-                            <button onClick={() => setFolderModalOpen(true)}>
-                                <FaPlus /> Create Folder
+                        {/* Header Section */}
+                        <div className={styles.inputDocumentHeader}>
+                            <button
+                                className={styles.inputDocumentBackButton}
+                                onClick={handleBackToParent}
+                                disabled={!currentFolder} // Disable if no parent to go back to
+                            >
+                                <FaArrowLeft /> Back
                             </button>
-                            <button onClick={() => setFileModalOpen(true)}>
-                                <FaUpload /> Upload File
-                            </button>
+
+                            <h2 className={styles.folderName}>
+                                {currentFolder ? currentFolder.name : 'Documents'}
+                            </h2>
+
+                            <div className={styles.inputDocumentButtonsContainer}>
+                                <button onClick={() => setFolderModalOpen(true)}>
+                                    <FaPlus /> Create Folder
+                                </button>
+                                <button onClick={() => setFileModalOpen(true)}>
+                                    <FaUpload /> Upload File
+                                </button>
+                            </div>
                         </div>
 
                         {/* Folder Creation Modal */}
@@ -530,33 +608,38 @@ const ProjectInfo = () => {
                         <div className={styles.inputDocumentCardsContainer}>
                             {currentFolder ? (
                                 <>
-                                    {/* Back Button */}
-                                    <button
-                                        className={styles.inputDocumentBackButton}
-                                        onClick={handleBackToParent}
-                                    >
-                                        <FaArrowLeft /> Back
-                                    </button>
-
-                                    <h2>{currentFolder.name}</h2>
                                     <p>{currentFolder.description}</p>
 
                                     {/* Subfolders */}
-                                    {currentFolder.subfolders.map((folder, index) => (
+                                    {currentFolder.subfolders.map((folder) => (
                                         <div
-                                            key={index}
+                                            key={folder.id}
                                             className={styles.inputDocumentCard}
                                             onClick={() => handleOpenFolder(folder)}
                                         >
                                             <FaFolder className={styles.inputDocumentCardIcon} />
                                             <h3>{folder.name}</h3>
                                             {folder.description && <p>{folder.description}</p>}
+                                            <div className={styles.optionsMenu}>
+                                                <button
+                                                    className={styles.optionsButton}
+                                                    onClick={(e) => toggleOptions(e, folder.id)}
+                                                >
+                                                    <FaEllipsisV />
+                                                </button>
+                                                {showOptions[folder.id] && (
+                                                    <div className={styles.menu}>
+                                                        <button onClick={() => handleEdit(folder)}>Edit</button>
+                                                        <button onClick={() => handleDeleteFolder(folder)}>Delete</button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     ))}
 
                                     {/* Files */}
-                                    {currentFolder.files.map((file, index) => (
-                                        <div key={index} className={styles.inputDocumentCard}>
+                                    {currentFolder.files.map((file) => (
+                                        <div key={file.id} className={styles.inputDocumentCard}>
                                             <FaRegFileAlt className={styles.inputDocumentCardIcon} />
                                             <a
                                                 href={file.url}
@@ -567,6 +650,20 @@ const ProjectInfo = () => {
                                                 {file.name}
                                             </a>
                                             {file.description && <p>{file.description}</p>}
+                                            <div className={styles.optionsMenu}>
+                                                <button
+                                                    className={styles.optionsButton}
+                                                    onClick={(e) => toggleOptions(e, file.id)}
+                                                >
+                                                    <FaEllipsisV />
+                                                </button>
+                                                {showOptions[file.id] && (
+                                                    <div className={styles.menu}>
+                                                        <button onClick={() => handleEdit(file)}>Edit</button>
+                                                        <button onClick={() => handleDeleteFile(file)}>Delete</button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     ))}
                                 </>
@@ -575,15 +672,29 @@ const ProjectInfo = () => {
                                     {folders.length === 0 ? (
                                         <p>No folders or files available.</p>
                                     ) : (
-                                        folders.map((folder, index) => (
+                                        folders.map((folder) => (
                                             <div
-                                                key={index}
+                                                key={folder.id}
                                                 className={styles.inputDocumentCard}
                                                 onClick={() => handleOpenFolder(folder)}
                                             >
                                                 <FaFolder className={styles.inputDocumentCardIcon} />
                                                 <h3>{folder.name}</h3>
                                                 {folder.description && <p>{folder.description}</p>}
+                                                <div className={styles.optionsMenu}>
+                                                    <button
+                                                        className={styles.optionsButton}
+                                                        onClick={(e) => toggleOptions(e, folder.id)}
+                                                    >
+                                                        <FaEllipsisV />
+                                                    </button>
+                                                    {showOptions[folder.id] && (
+                                                        <div className={styles.menu}>
+                                                            <button onClick={() => handleEdit(folder)}>Edit</button>
+                                                            <button onClick={() => handleDeleteFolder(folder)}>Delete</button>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         ))
                                     )}
@@ -592,9 +703,7 @@ const ProjectInfo = () => {
                         </div>
                     </div>
                 )}
-
-
-
+                
 
                 {/* Assignees Section */}
                 {activeSection === 'assignees' && (

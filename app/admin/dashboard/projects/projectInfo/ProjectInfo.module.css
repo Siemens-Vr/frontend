@@ -635,6 +635,45 @@
 }
 
 /* Button Styles */
+.inputDocumentButtonsContainer button {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between icon and text */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+/* Create Folder Button */
+.inputDocumentButtonsContainer button:first-of-type {
+    background-color: #4caf50; /* Green */
+    color: white;
+}
+
+/* Upload File Button */
+.inputDocumentButtonsContainer button:last-of-type {
+    background-color: #2196f3; /* Blue */
+    color: white;
+}
+
+/* Hover Effect */
+.inputDocumentButtonsContainer button:hover {
+    background-color: #333;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Active/Pressed Effect */
+.inputDocumentButtonsContainer button:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
+/* Button Styles */
 .button {
     padding: 10px 15px;
     display: flex;
@@ -684,49 +723,155 @@
     color: #1e90ff; /* Icon color */
 }
 
-/* Modal Styles */
+/* Modal Overlay */
 .inputDocumentModal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Overlay effect */
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
     display: flex;
-    justify-content: center; /* Center modal */
-    align-items: center; /* Center modal */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's above other content */
 }
 
+/* Modal Content */
 .inputDocumentModalContent {
-    background: white; /* Modal background */
-    padding: 20px; /* Inner spacing */
-    border-radius: 8px; /* Rounded corners */
-    width: 300px; /* Fixed width */
-    text-align: center; /* Center content */
+    background: #25203e; /* White background */
+    padding: 30px 25px;
+    border-radius: 12px;
+    width: 320px; /* Slightly wider for better appearance */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    text-align: center;
 }
 
 /* Input Styles */
-.input {
-    margin: 10px 0; /* Vertical margin */
-    padding: 8px; /* Inner spacing */
+.inputDocumentModalContent input {
+    margin: 12px 0; /* Vertical margin */
+    padding: 10px; /* Inner padding */
     width: 100%; /* Full width */
+    font-size: 16px;
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 8px; /* Rounded corners */
+    transition: border-color 0.3s;
 }
 
-/* Modal Button Styles */
+/* Input Focus Effect */
+.inputDocumentModalContent input:focus {
+    outline: none;
+    border-color: #2196f3; /* Blue focus color */
+}
+
+/* Modal Button Container */
 .inputDocumentModalButtons {
     display: flex;
-    justify-content: space-between; /* Space buttons */
-    margin-top: 10px; /* Top margin */
+    justify-content: space-between; /* Space between buttons */
+    margin-top: 15px;
 }
+
+/* Create and Cancel Button Styles */
+.inputDocumentModalButtons button {
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 48%; /* Ensure equal size for both buttons */
+}
+
+/* Create Button */
+.inputDocumentModalButtons button:first-of-type {
+    background-color: #4caf50; /* Green */
+    color: white;
+}
+
+/* Cancel Button */
+.inputDocumentModalButtons button:last-of-type {
+    background-color: #f44336; /* Red */
+    color: white;
+}
+
+/* Hover Effect */
+.inputDocumentModalButtons button:hover {
+    transform: scale(1.05);
+    background-color: #333;
+}
+
+/* Active/Pressed Effect */
+.inputDocumentModalButtons button:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
 
 /* Back Button Styles */
 .inputDocumentBackButton {
-    margin-bottom: 15px; /* Bottom margin */
-    padding: 8px 12px; /* Inner spacing */
-    background-color: #6c757d; /* Secondary color */
+    display: inline-flex; /* Ensures it doesn't stretch like a block element */
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+    padding: 0 5px; /* Inner padding */
+    background-color: #6c757d; /* Secondary button color */
     color: white; /* Text color */
     border: none; /* No border */
     border-radius: 5px; /* Rounded corners */
     cursor: pointer; /* Pointer cursor */
+    font-size: 16px; /* Fixed font size */
+    font-weight: bold; /* Bold text */
+    width: fit-content; /* Prevents the button from stretching */
+    height: 20px;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-bottom: 15px; /* Spacing below the button */
 }
 
+/* Back Button Hover Effect */
+.inputDocumentBackButton:hover {
+    background-color: #5a6268; /* Darker gray on hover */
+    transform: scale(1.05); /* Slight scale-up effect */
+}
+
+/* Back Button Active Effect */
+.inputDocumentBackButton:active {
+    transform: scale(0.95); /* Scale-down effect on click */
+    opacity: 0.9; /* Slight transparency */
+}
+
+.optionsMenu {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: none; /* Hide by default */
+}
+
+.inputDocumentCard {
+    position: relative; /* Ensure the options menu is positioned relative to the card */
+}
+.inputDocumentCard:hover .optionsMenu {
+    display: inline-block; /* Show when hovering over the card */
+}
+
+.menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 100;
+    right: 0;
+}
+
+.menu button {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.menu button:hover {
+    background-color: #f0f0f0;
+}
