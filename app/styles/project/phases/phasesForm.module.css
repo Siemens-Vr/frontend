@@ -1,0 +1,65 @@
+/* AssigneesForm.module.css */
+.assigneesForm {
+    margin: 20px 0;
+}
+
+.assigneeSection {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #1c2935;
+}
+
+.assigneeInputs {
+    display: flex; /* Use flexbox for horizontal layout */
+    justify-content: space-between; /* Space out items */
+    margin-bottom: 10px; /* Added margin for spacing */
+    gap: 20px;
+}
+
+.roleAgeInputs {
+    display: flex; /* Use flexbox for horizontal layout */
+    justify-content: space-between; /* Space out items */
+    gap: 20px; /* Add gap between Role and Age inputs */
+}
+
+.nameGenderInputs {
+    display: flex; /* Use flexbox for horizontal layout */
+    justify-content: space-between; /* Space out items */
+    gap: 20px; /* Add gap between Name and Gender inputs */
+}
+
+.assigneeSection label {
+    margin-bottom: 8px;
+    flex: 1; /* Allow labels to take up equal space */
+}
+
+.assigneeSection input,
+.assigneeSection select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px; /* Added margin for spacing */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.ageInput {
+    width: 60px; /* Set a fixed width for age input */
+}
+
+.removeButton,
+.addButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center; /* Align the icon */
+}
+
+.removeButton:hover,
+.addButton:hover {
+    color: red; /* Change color on hover */
+}

@@ -1,16 +1,9 @@
-import PermissionCheck from "../app/permissionCheck";
-import { auth } from "../app/auth";
+import React from 'react'
 
-const Homepage = async () => {
-  const result = await auth();
-  const user = result?.user;
-
+const page = () => {
   return (
-    <div>
-      {/* <h1>hello</h1> */}
-      <PermissionCheck user={user} />
-    </div>
-  );
-};
+    <div>page</div>
+  )
+}
 
-export default Homepage;
+export default page

@@ -193,7 +193,7 @@ const SingleComponentPage = () => {
                   </td>
                   <td>
                     <span className={`${styles.badgePill} ${component.condition ? styles.greenPill : styles.redPill}`}>
-                      {component.condition ? 'Okay' : 'Not Okay'}
+                      {component.condition ? 'Not Okay' : 'Okay'}
                     </span>
                   </td>
                   <td className={styles.buttons}>

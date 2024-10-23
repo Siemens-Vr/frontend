@@ -4,6 +4,7 @@ import styles from '@/app/styles/supplier/UpdateSupplierPopup.module.css';
 import { config } from "/config";
 
 const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
+    // console.log(supplier)
     const [formData, setFormData] = useState({
         suppliers: '',
         itemDescription: '',
@@ -16,6 +17,7 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
         claimNumber: '',
         accounted: '',
         dateAccounted: '',
+        project:''
     });
 
     useEffect(() => {
@@ -32,6 +34,8 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
                 claimNumber: supplier.claimNumber || '',
                 accounted: supplier.accounted || '',
                 dateAccounted: supplier.dateAccounted ? new Date(supplier.dateAccounted).toISOString().slice(0,16) : '',
+                project: supplier.project,
+
             });
         }
     }, [supplier]);
@@ -245,6 +249,18 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
                             <option value="Imprest">Imprest</option>
                             <option value="Petty Cash">Petty Cash</option>
                         </select>
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="project">Project</label>
+                        <input
+                            type="text"
+                            id="project"
+                            name="project"
+                            value={formData.project}
+                            onChange={handleChange}
+                            placeholder="e.g. Eureka"
+                            required
+                        />
                     </div>
 
                     {renderFields()}

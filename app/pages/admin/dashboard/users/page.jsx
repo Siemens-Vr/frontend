@@ -1,6 +1,6 @@
 import { fetchUsers } from '@/app/lib/data';
-import styles from `@/app/styles/users/users.module.css`;
-import Search from `@/app/components/search/search`;
+import styles from '@/app/styles/users/users.module.css';
+import Search from '@/app/components/search/search';
 import Link from "next/link";
 
 const UsersPage = async () => {

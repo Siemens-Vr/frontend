@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import styles from `@/app/styles/supplier/addSupplier.module.css`;
+import styles from '@/app/styles/supplier/addSupplier.module.css';
 import { config } from "/config";
 
 
@@ -17,6 +17,7 @@ const SuppliersAddPage = () => {
         pvNo: "",
         accounted: "",
         dateAccounted: "",
+        project:""
     });
 
     const [successMessage, setSuccessMessage] = useState("");
@@ -41,12 +42,14 @@ const SuppliersAddPage = () => {
             claimNumber: formData.claimNumber,
             accounted: formData.accounted,
             dateAccounted: formData.dateAccounted ? new Date(formData.dateAccounted).toISOString() : null,
+            project: formData.project,
+
         };
 
         // console.log("Submitting formatted form data:", formattedData);
 
         try {
-            const response = await fetch(`${config.baseURL}/supplier`, {
+            const response = await fetch(`${config.baseURL}/suppliers`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -55,7 +58,7 @@ const SuppliersAddPage = () => {
             });
 
             if (response.ok) {
-                console.log("Supplier added successfully");
+                // console.log("Supplier added successfully");
                 setSuccessMessage("Supplier added successfully!");
                 setFormData({
                     suppliers: "",
@@ -69,6 +72,7 @@ const SuppliersAddPage = () => {
                     pvNo: "",
                     accounted: "",
                     dateAccounted: "",
+                    project:""
                 });
             } else {
                 console.error("Failed to add Supplier", await response.text());
@@ -79,36 +83,23 @@ const SuppliersAddPage = () => {
     };
 
     const renderFields = () => {
-        switch (formData.type) {
-            case "Claim":
-                return (
-                    <>
-                        <div className={styles.divInput}>
-                            <label htmlFor="pvNo" className={styles.label}>PV No</label>
-                            <input
-                                type="text"
-                                placeholder="PV No"
-                                name="pvNo"
-                                value={formData.pvNo}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className={styles.divInput}>
-                            <label htmlFor="claimNumber" className={styles.label}>Claim Number</label>
-                            <input
-                                type="text"
-                                placeholder="Claim Number"
-                                name="claimNumber"
-                                value={formData.claimNumber}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </>
-                );
-            case "Petty Cash":
-                return (
+        return (
+            <>
+                {(formData.type === "Claim" || formData.type === "Petty Cash") && (
+                    <div className={styles.divInput}>
+                        <label htmlFor="claimNumber" className={styles.label}>Claim Number</label>
+                        <input
+                            type="text"
+                            placeholder="Claim Number"
+                            name="claimNumber"
+                            value={formData.claimNumber}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                )}
+    
+                {(formData.type === "Claim" || formData.type === "Petty Cash" || formData.type === "Imprest") && (
                     <div className={styles.divInput}>
                         <label htmlFor="pvNo" className={styles.label}>PV No</label>
                         <input
@@ -120,21 +111,10 @@ const SuppliersAddPage = () => {
                             required
                         />
                     </div>
-                );
-            case "Imprest":
-                return (
+                )}
+    
+                {formData.type === "Imprest" && (
                     <>
-                        <div className={styles.divInput}>
-                            <label htmlFor="pvNo" className={styles.label}>PV No</label>
-                            <input
-                                type="text"
-                                placeholder="PV No"
-                                name="pvNo"
-                                value={formData.pvNo}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
                         <div className={styles.divInput}>
                             <label htmlFor="accounted" className={styles.label}>Accounted</label>
                             <select
@@ -160,11 +140,11 @@ const SuppliersAddPage = () => {
                             />
                         </div>
                     </>
-                );
-            default:
-                return null;
-        }
+                )}
+            </>
+        );
     };
+    
 
     return (
         <div className={styles.container}>
@@ -253,6 +233,21 @@ const SuppliersAddPage = () => {
                         <option value="Claim">Claim</option>
                         <option value="Imprest">Imprest</option>
                         <option value="Petty Cash">Petty Cash</option>
+                    </select>
+                </div>
+                <div className={styles.divInput}>
+                    <label htmlFor="project" className={styles.label}>Project</label>
+                    <select
+                        name="project"
+                        value={formData.project}
+                        onChange={handleChange}
+                        required
+                        className={styles.select}
+                    >
+                        <option value="">Select project vote</option>
+                        <option value="Sifa">Sifa</option>
+                        <option value="Eureka">Eureka</option>
+
                     </select>
                 </div>
 

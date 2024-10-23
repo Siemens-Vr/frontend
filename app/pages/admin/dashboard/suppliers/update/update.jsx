@@ -62,85 +62,56 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
     };
 
     const renderFields = () => {
-        switch (formData.type) {
-            case "Claim":
-                return (
-                    <>
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="PvNo">PV No</label>
-                            <input
-                                type="text"
-                                id="PvNo"
-                                name="PvNo"
-                                value={formData.PvNo}
-                                onChange={handleChange}
-                                placeholder="e.g. PV123456"
-                                required
-                            />
-                        </div>
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="claimNumber">Claim Number</label>
-                            <input
-                                type="text"
-                                id="claimNumber"
-                                name="claimNumber"
-                                value={formData.claimNumber}
-                                onChange={handleChange}
-                                placeholder="e.g. CL123456"
-                                required
-                            />
-                        </div>
-                    </>
-                );
-            case "Petty Cash":
-                return (
-                    <div className={styles.inputGroup}>
-                        <label htmlFor="PvNo">PV No</label>
+        return (
+            <>
+                {(formData.type === "Claim" || formData.type === "Petty Cash") && (
+                    <div className={styles.divInput}>
+                        <label htmlFor="claimNumber" className={styles.label}>Claim Number</label>
                         <input
                             type="text"
-                            id="PvNo"
-                            name="PvNo"
-                            value={formData.PvNo}
+                            placeholder="Claim Number"
+                            name="claimNumber"
+                            value={formData.claimNumber}
                             onChange={handleChange}
-                            placeholder="e.g. PV123456"
                             required
                         />
                     </div>
-                );
-            case "Imprest":
-                return (
+                )}
+    
+                {(formData.type === "Claim" || formData.type === "Petty Cash" || formData.type === "Imprest") && (
+                    <div className={styles.divInput}>
+                        <label htmlFor="pvNo" className={styles.label}>PV No</label>
+                        <input
+                            type="text"
+                            placeholder="PV No"
+                            name="pvNo"
+                            value={formData.pvNo}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                )}
+    
+                {formData.type === "Imprest" && (
                     <>
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="PvNo">PV No</label>
-                            <input
-                                type="text"
-                                id="PvNo"
-                                name="PvNo"
-                                value={formData.PvNo}
-                                onChange={handleChange}
-                                placeholder="e.g. PV123456"
-                                required
-                            />
-                        </div>
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="accounted">Accounted</label>
+                        <div className={styles.divInput}>
+                            <label htmlFor="accounted" className={styles.label}>Accounted</label>
                             <select
-                                id="accounted"
                                 name="accounted"
                                 value={formData.accounted}
                                 onChange={handleChange}
                                 required
+                                className={styles.select}
                             >
-                                <option value="">Select</option>
+                                <option value="">Select Accounted</option>
                                 <option value="Yes">Yes</option>
                                 <option value="No">No</option>
                             </select>
                         </div>
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="dateAccounted">Date Accounted</label>
+                        <div className={styles.divInput}>
+                            <label htmlFor="dateAccounted" className={styles.label}>Date Accounted</label>
                             <input
                                 type="datetime-local"
-                                id="dateAccounted"
                                 name="dateAccounted"
                                 value={formData.dateAccounted}
                                 onChange={handleChange}
@@ -148,11 +119,11 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
                             />
                         </div>
                     </>
-                );
-            default:
-                return null;
-        }
+                )}
+            </>
+        );
     };
+    
 
     return (
         <div className={styles.overlay}>

@@ -15,6 +15,8 @@ import { config } from '/config';
 const ViewCohort = () => {
   const router = useRouter();
   const [cohortsData, setCohortsData] = useState(null);
+  const [levelsData, setLevelsData] = useState(null);
+  
   const { id } = useParams();
   const [showPopup, setShowPopup] = useState(false);
 
@@ -52,7 +54,9 @@ const ViewCohort = () => {
         const response = await fetch(`${config.baseURL}/cohorts/${id}`);
         const data = await response.json();
         // console.log(data)
-        setCohortsData(data);
+        setCohortsData(data.cohort);
+        setLevelsData(data.levels || [])
+
       }
     } catch (error) {
       console.error("Error fetching cohort data:", error);
@@ -84,11 +88,11 @@ const ViewCohort = () => {
     <div className={styles.container}>
       <div className={styles.details}>
           <div className={styles.detailsRow}>
-          <h1>{cohortsData.cohorts.cohortName}</h1>
+          <h1>{cohortsData.cohortName}</h1>
            
           <p>
-            Start Date: {new Date(cohortsData.cohorts.startDate).toLocaleDateString()} |
-            End Date: {new Date(cohortsData.cohorts.endDate).toLocaleDateString()}
+            Start Date: {new Date(cohortsData.startDate).toLocaleDateString()} |
+            End Date: {new Date(cohortsData.endDate).toLocaleDateString()}
           </p>
           <button onClick={() => setShowPopup(true)} className={styles.button}>
             Add Level
@@ -100,23 +104,26 @@ const ViewCohort = () => {
        
       </div>
       <div className={styles.levelsContainer}>
-        {cohortsData.levels.map((level) => (
-          <div className={styles.card} key={level.uuid}>
-            <h2 className={styles.levelName}>{level.levelName}</h2>
-            <p className={styles.levelDetails}> Number of Students: {level.students ? level.students.length : 0}</p>
-            <p className={styles.levelDetails}> Number of Facilitators: {level.facilitators ? level.facilitators.length : 0}</p>
-            <div className={styles.cardFooter}>
-            <Link className={`${styles.button} ${styles.view}`} href={`/pages/student/dashboard/cohorts/${cohortsData.cohorts.uuid}/levels/${level.uuid}`}>
-              View More
-            </Link>
-         
+        {levelsData.length > 0 ? (
+          levelsData.map((level) => (
+            <div className={styles.card} key={level.uuid}>
+              <h2 className={styles.levelName}>{level.levelName}</h2>
+              <p className={styles.levelDetails}>Number of Students: {level.students ? level.students.length : 0}</p>
+              <p className={styles.levelDetails}>Number of Facilitators: {level.facilitators ? level.facilitators.length : 0}</p>
+              <div className={styles.cardFooter}>
+                <Link className={`${styles.button} ${styles.view}`} href={`/pages/student/dashboard/cohorts/${cohortsData.uuid}/levels/${level.uuid}`}>
+                  View More
+                </Link>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className='text-center text-lg'>No levels available for this cohort.</p> // Message when no levels are available
+        )}
       </div>
       {showPopup && (
         <LevelAddPopUp
-          cohortId={cohortsData.cohorts.uuid}
+          cohortId={cohortsData.uuid}
           onClose={() => setShowPopup(false)}
           onAdd={handleLevelAdd}
         />

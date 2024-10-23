@@ -11,7 +11,7 @@ import {
   MdHelpCenter,
   MdLogout,
 } from "react-icons/md";
-import { auth, signOut } from "/app/auth";
+// import { auth, signOut } from "/app/auth";
 
 
 const adminMenuItems = [
@@ -20,7 +20,7 @@ const adminMenuItems = [
     list: [
       { title: "Dashboard", path: "/pages/admin/dashboard", icon: <MdDashboard /> },
       { title: "Staff", path: "/pages/admin/dashboard/staff", icon: <MdPeople /> },
-      { title: "Suppliers", path: "/pages/admin/dashboard/suppliers", icon: <MdAnalytics /> },
+      { title: "Procurement", path: "/pages/admin/dashboard/suppliers", icon: <MdAnalytics /> },
       { title: "Student", path: "/pages/student/dashboard", icon: <MdAnalytics /> },
       { title: "Equipment", path: "/pages/equipment/dashboard", icon: <MdAnalytics /> },
       { title: "Project", path: "/pages/project/dashboard", icon: <MdAnalytics /> },
@@ -79,7 +79,7 @@ const projectsMenuItems = [
       { title: "Dashboard", path: "/pages/project/dashboard", icon: <MdDashboard /> },
       { title: "Projects", path: "/pages/project/dashboard/projects", icon: <MdPeople /> },
       { title: "Tracking", path: "/pages/project/dashboard/tracking", icon: <MdAnalytics /> },
-      { title: "Calender", path: "/pages/project/dashboard/calendar", icon: <MdAnalytics /> },
+      { title: "Calendar", path: "/pages/project/dashboard/calendar", icon: <MdAnalytics /> },
       { title: "Notifications", path: "/pages/project/dashboard/notifications", icon: <MdAnalytics /> },
     ],
   },

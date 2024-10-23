@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import styles from '@/app/styles/students/addStudent/addStudent.module.css'
+import { useState } from "react";
+import styles from '@/app/styles/students/addStudent/addStudent.module.css';
 import { config } from "/config";
+import CohortModal from '@/app/components/cohort/AddCohort';
+import Spinner from '@/app/components/spinner/spinner'
+
 
 const AddStudentPage = () => {
-  const [cohorts, setCohorts] = useState([]);
-  const [levels, setLevels] = useState([]);
-  const [selectedCohortUuid, setSelectedCohortUuid] = useState("");
+  const [showCohortModal, setShowCohortModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [cohortLevelList, setCohortLevelList] = useState([]);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -17,75 +21,57 @@ const AddStudentPage = () => {
     regNo: "",
     kcseNo: "",
     gender: "",
-    cohort: "",
-    level: "",
-    feePayment: "",
-    examResults: ""
+   
   });
 
-  useEffect(() => {
-    const fetchCohorts = async () => {
-      try {
-        const response = await fetch(`${config.baseURL}/cohorts`);
-        const data = await response.json();
-        // console.log(data);
-        setCohorts(data);
-      } catch (error) {
-        console.error("Error fetching cohorts:", error);
-      }
-    };
-    fetchCohorts();
-  }, []);
-
-  useEffect(() => {
-    if (selectedCohortUuid) {
-      const fetchLevels = async () => {
-        try {
-          const url =`${config.baseURL}/levels/${selectedCohortUuid}`
-          console.log(url)
-          const response = await fetch(url);
-          const data = await response.json();
-          console.log(data);
-          setLevels(data);
-        } catch (error) {
-          console.error("Error fetching levels:", error);
-        }
-      };
-      fetchLevels();
-    }
-  }, [selectedCohortUuid]);
-
   const handleChange = (e) => {
+    setErrorMessage("");
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleCohortChange = (e) => {
-    const uuid = e.target.value;
-    setSelectedCohortUuid(uuid);
-    setFormData({ ...formData, cohort: uuid });
+  const handleSaveCohorts = (data) => {
+    setCohortLevelList(data);
   };
 
-  // console.log(formData);
+  const handleDelete = (index) => {
+    // Filter out the item by index
+    const updatedCohortLevelList = cohortLevelList.filter((_, i) => i !== index);
+    
+    // Update the state with the new list
+    setCohortLevelList(updatedCohortLevelList);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setErrorMessage(""); 
+    
+    const dataToSend = {
+      ...formData,
+      cohortLevels: cohortLevelList.map(item => ({
+        cohortUuid: item.cohortUuid,
+        levelUuid: item.levelUuid,
+        fee : item.fee,
+        examResults : item.examResults
+
+      }))
+    };
+
+    // console.log("Data to be sent to the backend:", dataToSend);
+
     try {
-      console.log("Submitting form data:", formData); // Log the form data being sent
-  
       const response = await fetch(`${config.baseURL}/students`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
-  
-      console.log("Response status:", response.status); // Log the response status code
-  
+
       if (response.ok) {
-        console.log("Student added successfully");
+        // console.log("Student added successfully");
         setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 3000); // Hide after 3 seconds
-        // Reset form
+        setTimeout(() => setShowSuccess(false), 3000);
         setFormData({
           firstName: "",
           lastName: "",
@@ -94,81 +80,30 @@ const AddStudentPage = () => {
           regNo: "",
           kcseNo: "",
           gender: "",
-          cohort: "",
-          level: "",
-          feePayment: "",
-          examResults: ""
+          
         });
-        setLevels([]);
-        setSelectedCohortUuid("");
+        setCohortLevelList([]);
       } else {
-        const contentType = response.headers.get("Content-Type");
-        if (contentType && contentType.includes("application/json")) {
-          const errorData = await response.json(); // Parse JSON response
-          console.error("Error response:", errorData);
-        } else {
-          console.error("Unexpected response format. Response might be an HTML error page.");
-        }
+        const errorData = await response.json();
+        setErrorMessage(errorData?.error?.errors?.[0]?.message || "An error occurred");
       }
     } catch (error) {
-      console.error("Error:", error);
+      setErrorMessage("An error occurred while adding the student.");
+    } finally {
+      setLoading(false);
     }
+    
   };
-  
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     // console.log("Submitting form data:", formData); // Log the form data being sent
-
-  //     const response = await fetch(`${config.baseURL}/students`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(formData),
-  //     });
-
-  //     console.log("Response status:", response.status); // Log the response status code
-
-  //     if (response.ok) {
-  //       console.log("Student added successfully");
-  //       setShowSuccess(true);
-  //       setTimeout(() => setShowSuccess(false), 3000); // Hide after 3 seconds
-  //       // Reset form
-  //       setFormData({
-  //         firstName: "",
-  //         lastName: "",
-  //         email: "",
-  //         phone: "",
-  //         regNo: "",
-  //         kcseNo: "",
-  //         gender: "",
-  //         cohort: "",
-  //         level: "",
-  //         feePayment: "",
-  //         examResults: ""
-  //       });
-  //       setLevels([]);
-  //       setSelectedCohortUuid("");
-  //     } else {
-  //       console.error("Failed to add student");
-  //       const errorData = await response.json(); // Get the error response data
-  //       console.error("Error response:", errorData); // Log the error response
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
 
   return (
     <div className={styles.container}>
-      {showSuccess && (
-        <div className={styles.successMessage}>
-          Student added successfully!
-        </div>
-      )}
+      {showSuccess && (<div className={styles.successMessage}>Student added successfully!</div>)}
       <form onSubmit={handleSubmit} className={styles.form}>
+      {errorMessage && (
+           <div className="bg-red-800 text-white py-2 px-4 mb-4 rounded w-full ">
+            {errorMessage}
+          </div>
+        )}
         <input
           type="text"
           placeholder="First Name"
@@ -227,62 +162,69 @@ const AddStudentPage = () => {
           <option value="female">Female</option>
           <option value="other">Other</option>
         </select>
-        <select
-          name="cohort"
-          value={formData.cohort}
-          onChange={handleCohortChange}
-          required
-        >
-          <option value="">Select Cohort</option>
-          {cohorts.length > 0 ? (
-            cohorts.map((cohort) => (
-              <option key={cohort.uuid} value={cohort.uuid}>
-                {cohort.cohortName}
-              </option>
-            ))
-          ) : (
-            <option value="" disabled>Loading cohorts...</option>
-          )}
-        </select>
-        <select
-          name="level"
-          value={formData.level}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Level</option>
-          {levels.length > 0 ? (
-            levels.map((level) => (
-              <option key={level.id} value={level.uuid}>
-                {level.levelName}
-              </option>
-            ))
-          ) : (
-            <option value="" disabled>Loading levels...</option>
-          )}
-        </select>
-        <select
-          name="feePayment"
-          value={formData.feePayment}
-          onChange={handleChange}
-        >
-          <option value="">Fee Payment Status</option>
-          <option value="paid">Paid</option>
-          <option value="unpaid">Unpaid</option>
-        </select>
-        <select
-          name="examResults"
-          value={formData.examResults}
-          onChange={handleChange}
-        >
-          <option value="">Exam Result Status</option>
-          <option value="pass">Pass</option>
-          <option value="fail">Fail</option>
-          <option value="no-show">No Show</option>
-        </select>
 
-        <button type="submit">Submit</button>
+
+        <button
+          type="button"
+          onClick={() => setShowCohortModal(true)}
+          className={styles.addCohortButton}
+        >
+          <span className={styles.plusSign}>+</span>
+          <span className={styles.addText}>Add Cohort and Level</span>
+        </button>
+
+
+        {cohortLevelList.length > 0 && (
+        <div className={styles.cohortLevelList}>
+          <h3>Selected Cohorts and Levels:</h3>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cohort Name</th>
+                <th>Level Name</th>
+                <th>Fee Amount</th>
+                <th>Exam Results</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cohortLevelList.map((item, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{item.cohortName}</td>
+                  <td>{item.levelName}</td>
+                  <td>{item.fee}</td>
+                  <td>{item.examResults}</td>
+                  <td>
+                  <button onClick={() => handleDelete(index)} className={styles.deleteButton}>
+                    Delete
+                  </button>
+                </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+        <button type="submit" className={styles.submitButton} disabled={loading}>
+        {loading ? (
+              <>
+                <Spinner /> Please wait...
+              </>
+            ) : (
+              'Submit'
+            )}
+        </button>
+ 
       </form>
+      {showCohortModal && (
+        <CohortModal
+          onSave={handleSaveCohorts}
+          onClose={() => setShowCohortModal(false)}
+        />
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 
-import { addUser } from '@/app/lib/data';
-import styles from `@/app/styles/students/addStudent/addStudent.module.css`
+import { addUser } from '@/app/lib/actions';
+import styles from '@/app/styles/students/addStudent/addStudent.module.css';
 
 const AddUsersPage = () => {
     return (

@@ -47,6 +47,7 @@ const AddFacilitatorPage = () => {
       } else {
         // Handle submission error
         console.error("Failed to add Facilitator");
+        alert("Failed to add Facilitator")
       }
     } catch (error) {
       console.error("Error:", error);

@@ -51,11 +51,7 @@ const UploadForm = () => {
           <label htmlFor="file">Upload Excel File</label>
           <input type="file" name="file" onChange={handleFileChange} />
         </div>
-        {selectedFile && (
-          <div className={styles.divInput}>
-            <p>Selected file: {selectedFile.name}</p>
-          </div>
-        )}
+  
         <button type="submit">Upload and Proceed</button>
       </form>
       {uploadMessage && (

@@ -171,8 +171,8 @@ const LevelDetails = ({ searchParams }) => {
               <td>{levelData.levelName}</td>
               <td>{new Date(levelData.startDate).toLocaleDateString()}</td>
               <td>{new Date(levelData.endDate).toLocaleDateString()}</td>
-              <td>{new Date(levelData.exam_dates).toLocaleDateString()}</td>
-              <td>{levelData.exam_quotation_number}</td>
+              <td>{new Date(levelData.examDates).toLocaleDateString()}</td>
+              <td>{levelData.examQuotationNumber}</td>
               <td>
                 <button onClick={() => setShowPopup(true)} className={styles.button}>Update</button>
                 <button onClick={handleDownloadPDF} className={styles.button}>Download PDF</button>
@@ -253,7 +253,7 @@ const LevelDetails = ({ searchParams }) => {
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>{facilitator.firstName} {facilitator.lastName}</td>
-                    <td>{facilitator.phoneNo}</td>
+                    <td>{facilitator.phone}</td>
                     <td>{facilitator.specification}</td>
                     <td>
                       <div className={styles.hoursButtons}>

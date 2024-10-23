@@ -13,8 +13,8 @@ const LevelEditPopup = ({ levelData, onClose, onUpdate }) => {
     levelName: levelData.levelName,
     startDate: formatDate(levelData.startDate),
     endDate: formatDate(levelData.endDate),
-    exam_dates: formatDate(levelData.exam_dates),
-    exam_quotation_number: levelData.exam_quotation_number,
+    exam_dates: formatDate(levelData.examDates),
+    exam_quotation_number: levelData.examQuotationNumber,
   });
 
   const handleChange = (e) => {

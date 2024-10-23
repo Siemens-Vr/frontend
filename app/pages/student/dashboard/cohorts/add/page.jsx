@@ -4,9 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import styles from '@/app/styles/cohorts/addCohort/addCohort.module.css';
 import Link from 'next/link';
+import Spinner from '@/app/components/spinner/spinner'
 import { config } from '/config';
 
-console.log(`${config.baseURL}`)
+// console.log(`${config.baseURL}`)
 
 const CohortForm = () => {
   const [cohortName, setCohortName] = useState('');
@@ -18,6 +19,29 @@ const CohortForm = () => {
   const [selectedFacilitator, setSelectedFacilitator] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
   const [facilitatorRoles, setFacilitatorRoles] = useState([]);
+  const [cohortDateError, setCohortDateError] = useState('');
+  const [levelDateErrors, setLevelDateErrors] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+
+   // Cohort date validation on input
+   const handleCohortStartDateChange = (value) => {
+    setStartDate(value);
+    if (new Date(endDate) && new Date(value) >= new Date(endDate)) {
+      setCohortDateError('Cohort start date must be before end date.');
+    } else {
+      setCohortDateError('');
+    }
+  };
+
+  const handleCohortEndDateChange = (value) => {
+    setEndDate(value);
+    if (new Date(startDate) && new Date(value) <= new Date(startDate)) {
+      setCohortDateError('Cohort end date must be after start date.');
+    } else {
+      setCohortDateError('');
+    }
+  };
 
   useEffect(() => {
     const fetchFacilitators = async () => {
@@ -56,35 +80,43 @@ const CohortForm = () => {
       }
 
       const levelData = await levelResponse.json();
-      // console.log('Level created:', levelData);
+      console.log('Level created:', levelData);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Create one payload with both cohort and levels data
+    const payload = {
+      cohortName,
+      startDate,
+      endDate,
+      levels, // Send all the levels as part of the cohort creation
+    };
+  
     try {
+      setLoading(true); // Start the loading spinner
+  console.log(payload)
       const cohortResponse = await fetch(`${config.baseURL}/cohorts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cohortName, startDate, endDate }),
+        body: JSON.stringify(payload),
       });
-
+  
       if (!cohortResponse.ok) {
-        throw new Error('Failed to create cohort');
+        throw new Error('Failed to create cohort and levels');
       }
-
-      const cohort = await cohortResponse.json();
-      const cohortId = cohort.uuid;
-
-      console.log('Created cohort:', cohort);
-
-      await handleLevels(cohortId);
-
+  
+      const result = await cohortResponse.json();
+      console.log('Cohort and levels created:', result);
+  
+      // Show success message
       setShowSuccessMessage(true);
-
+  
+      // Reset form after 3 seconds
       setTimeout(() => {
         setShowSuccessMessage(false);
         setCohortName('');
@@ -94,8 +126,11 @@ const CohortForm = () => {
       }, 3000);
     } catch (error) {
       console.error('Error creating cohort and levels:', error);
+    } finally {
+      setLoading(false); // Stop the loading spinner
     }
   };
+  
 
   const addLevel = () => {
     setLevels([...levels, { levelName: '', startDate: '', endDate: '', exam_dates: '' , exam_quotation_number: '', facilitators: [] }]);
@@ -106,11 +141,31 @@ const CohortForm = () => {
     setLevels(updatedLevels);
   };
 
-  const handleLevelChange = (index, field, value) => {
-    const updatedLevels = [...levels];
-    updatedLevels[index][field] = value || null;
-    setLevels(updatedLevels);
-  };
+ // Level date validation on input
+ const handleLevelChange = (index, field, value) => {
+  const updatedLevels = [...levels];
+  updatedLevels[index][field] = value || null;
+
+  // Level date validation
+  const updatedLevelDateErrors = [...levelDateErrors];
+
+  // Validate level start and end dates within cohort dates
+  if (field === 'startDate' || field === 'endDate') {
+    const levelStartDate = new Date(updatedLevels[index].startDate);
+    const levelEndDate = new Date(updatedLevels[index].endDate);
+
+    if (levelStartDate < new Date(startDate) || levelEndDate > new Date(endDate)) {
+      updatedLevelDateErrors[index] = 'Level dates must be within the cohort start and end dates.';
+    } else if (levelEndDate <= levelStartDate) {
+      updatedLevelDateErrors[index] = 'Level end date must be after the start date.';
+    } else {
+      updatedLevelDateErrors[index] = '';
+    }
+  }
+
+  setLevels(updatedLevels);
+  setLevelDateErrors(updatedLevelDateErrors);
+};
 
   const addFacilitatorRole = (levelIndex) => {
     if (selectedFacilitator && selectedRole) {
@@ -132,8 +187,8 @@ const CohortForm = () => {
   };
 
   const roleOptions = [
-    { value: 'Theory instructor', label: 'Theory instructor' },
-    { value: ' Practical Instructo', label: ' Practical Instructo' },
+    { value: 'Theory Instructor', label: 'Theory Instructor' },
+    { value: ' Practical Instructor', label: ' Practical Instructor' },
   ];
 // console.log(facilitators)
   return (
@@ -159,8 +214,10 @@ const CohortForm = () => {
               className={styles.input}
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) =>handleCohortStartDateChange(e.target.value)}
             />
+          {cohortDateError && <p className='text-red-600 text-sm'>{cohortDateError}</p>}
+
           </div>
           <div className={styles.formGroup}>
             <label className={styles.label}>End Date</label>
@@ -168,8 +225,10 @@ const CohortForm = () => {
               className={styles.input}
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => handleCohortEndDateChange(e.target.value)}
             />
+          {cohortDateError && <p className='text-red-600 text-sm'>{cohortDateError}</p>}
+
           </div>
 
           {levels.map((level, index) => (
@@ -177,13 +236,19 @@ const CohortForm = () => {
               <h3 className={styles.title}>Level</h3>
               <div className={styles.formGroup}>
                 <label className={styles.label}>Level Name</label>
-                <input
+                <select
                   className={styles.input}
-                  type="text"
-                  placeholder="Enter level name"
+                  name="levelName"
                   value={level.levelName}
                   onChange={(e) => handleLevelChange(index, 'levelName', e.target.value)}
-                />
+                  required
+                >
+                  <option value="">Select level name</option>
+                  <option value="SMSCP Level 1">SMSCP Level 1</option>
+                  <option value="SMSCP Level 2">SMSCP Level 2</option>
+                  <option value="SMSCP Level 3">SMSCP Level 3</option>
+                </select>
+          
               </div>
               <div className={styles.formGroup}>
                 <label className={styles.label}>Start Date</label>
@@ -194,6 +259,8 @@ const CohortForm = () => {
                   onChange={(e) => handleLevelChange(index, 'startDate', e.target.value)}
                 />
               </div>
+              {levelDateErrors[index] && <p className='text-red-700 text-base text-center	font-semibold	 '>{levelDateErrors[index]}</p>}
+
               <div className={styles.formGroup}>
                 <label className={styles.label}>End Date</label>
                 <input
@@ -203,6 +270,8 @@ const CohortForm = () => {
                   onChange={(e) => handleLevelChange(index, 'endDate', e.target.value)}
                 />
               </div>
+              {levelDateErrors[index] && <p className='text-red-700 text-base text-center	font-semibold'>{levelDateErrors[index]}</p>}
+
               <div className={styles.formGroup}>
                 <label className={styles.label}>Exam Date</label>
                 <input
@@ -294,12 +363,14 @@ const CohortForm = () => {
           >
             Add New Level
           </button>
-          <button
-            type="submit"
-            className={`${styles.submitButton} ${styles.button}`}
-            disabled={levels.length === 0}
-          >
-            Create Cohort
+          <button type="submit" className={`${styles.submitButton} ${styles.button}`} disabled={loading}>
+            {loading ? (
+              <>
+                <Spinner /> Please wait...
+              </>
+            ) : (
+              'Create Cohort'
+            )}
           </button>
         </div>
       </form>

@@ -159,7 +159,7 @@
   background-color: white;
   padding: 30px;
   border-radius: 10px;
-  max-width: 500px;
+  max-width: 600px;
   width: 90%;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   animation: popupFadeIn 0.3s ease-out;
@@ -190,11 +190,12 @@
 }
 
 .popupContent input {
-  padding: 10px;
+  padding: 5px;
   margin-bottom: 15px;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 16px;
+  color:black;
 }
 
 .popupButtons {
@@ -286,19 +287,20 @@
 .entryRow {
   display: flex;
   gap: 10px;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
   align-items: center;
 }
 
 .entryRow input {
-  flex: 1;
+  /* flex: 1; */
 }
 
-.removeEntryBtn {
+.entryRow .removeEntryBtn {
+  height: 100%;
   background-color: #ff4d4d;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;

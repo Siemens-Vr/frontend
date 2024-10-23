@@ -80,7 +80,7 @@ const SingleStaffPage = ({ params }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`https://erp-api-jz0q.onrender.com/staffs/${id}/update`, {
+      const response = await fetch(`${config.baseURL}/staffs/${id}/update`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ const SingleStaffPage = ({ params }) => {
         setSuccessMessage('');
       }, 2000);
 
-      const updatedStaff = await fetch(`https://erp-api-jz0q.onrender.com/staffs/${id}`);
+      const updatedStaff = await fetch(`${config.baseURL}/staffs/${id}`);
       const updatedData = await updatedStaff.json();
       setStaff(updatedData);
     } catch (error) {
@@ -110,7 +110,7 @@ const handleLeaveSubmit = async (e) => {
   try {
     const formattedDate = new Date(leaveData.newLeaveDate).toISOString().split('T')[0];
 
-    const response = await fetch(`https://erp-api-jz0q.onrender.com/staffs/${id}/leave`, {
+    const response = await fetch(`${config.baseURL}/staffs/${id}/leave`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ const handleLeaveSubmit = async (e) => {
     }));
 
     // Fetch updated staff data
-    const updatedStaffResponse = await fetch(`https://erp-api-jz0q.onrender.com/staffs/${id}`);
+    const updatedStaffResponse = await fetch(`${config.baseURL}/staffs/${id}`);
     const updatedStaffData = await updatedStaffResponse.json();
     setStaff(updatedStaffData);
     
@@ -157,7 +157,7 @@ const handleLeaveSubmit = async (e) => {
 
 const handleDeleteLeaveDate = async (index, date) => {
   try {
-    const response = await fetch(`https://erp-api-jz0q.onrender.com/staffs/${id}/leave`, {
+    const response = await fetch(`${config.baseURL}/staffs/${id}/leave`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

@@ -37,6 +37,7 @@ const StudentsPage = () => {
     const fetchStudents = async () => {
       try {
         const url = `${config.baseURL}/students${q ? `?q=${q}` : ''}${page ? `${q ? '&' : '?'}page=${page}` : ''}`;
+        console.log(url)
         const response = await fetch(url);
         const data = await response.json();
         if (response.ok) {

@@ -37,8 +37,7 @@ const SinstudentPage = ({ params }) => {
       kcseNo: formData.get('kcseNo'),
       gender: formData.get('gender'),
      
-      feePayment: formData.get('feePayment'),
-      examResults: formData.get('examResults')
+   
     };
 
     try {

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Pagination from '@/app/components/pagination/pagination';
-import Search from '@/app/components/search/search';
+import Search from '@/app/components/search/searchFilter';
 import styles from '@/app/styles/students/students.module.css';
 import Link from "next/link";
 import UpdateSupplierPopup from '@/app/components/suppliers/update';
@@ -11,39 +12,57 @@ import { config } from "/config";
 const StudentsPage = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [count, setCount] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
 
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+  const q = searchParams.get('q') || '';
+  const page = searchParams.get('page') || 0;
+  const filter = searchParams.get('filter') || 'all';
+
   useEffect(() => {
-    const fetchSuppliers = async () => {
-      try {
-        const response = await fetch(`${config.baseURL}/supplier/search`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ search: searchQuery }),
-        });
+    if (!searchParams.has('page')) {
+      const params = new URLSearchParams(searchParams);
+      params.set('page', 0);
+      replace(`${window.location.pathname}?${params.toString()}`);
+    }
+  }, []);
 
-        if (response.ok) {
-          const data = await response.json();
-          setSuppliers(data || []);
-          setCount(data.length || 0); // Set count based on length of data
-        } else {
-          console.error('Error fetching suppliers:', await response.text());
-        }
-      } catch (error) {
-        console.error('Error fetching suppliers:', error);
-      }
-    };
-
+  useEffect(() => {
     fetchSuppliers();
-  }, [searchQuery]);
+  }, [q, page, filter]);
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+  const fetchSuppliers = async () => {
+    try {
+      let url = `${config.baseURL}/suppliers?`;
+      const params = new URLSearchParams();
+      
+      if (q) params.append('q', q);
+      if (page) params.append('page', page);
+      if (filter && filter !== 'all') params.append('filter', filter);
+      
+      url += params.toString();
+
+      // console.log(url)
+
+      const response = await fetch(url);
+      const data = await response.json();
+      // console.log(data)
+      if (response.ok) {
+        const { content, count } = data;
+        setSuppliers(content || []);
+        setCount(count || 0);
+      } else {
+        console.error('Error fetching suppliers:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error fetching suppliers:', error);
+    }
   };
+
+
+
 
   const handleUpdateClick = (supplier) => {
     setSelectedSupplier(supplier);
@@ -57,30 +76,6 @@ const StudentsPage = () => {
 
   const handleSavePopup = async () => {
     handleClosePopup();
-
-    // Fetch suppliers again to refresh the list
-    const fetchSuppliers = async () => {
-      try {
-        const response = await fetch(`${config.baseURL}/supplier/search`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ search: searchQuery }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setSuppliers(data || []);
-          setCount(data.length || 0);
-        } else {
-          console.error('Error fetching suppliers:', await response.text());
-        }
-      } catch (error) {
-        console.error('Error fetching suppliers:', error);
-      }
-    };
-
     await fetchSuppliers();
   };
 
@@ -101,21 +96,21 @@ const StudentsPage = () => {
           alert('Supplier deleted successfully!');
 
           // Refetch suppliers after deletion to refresh the list
-          const updatedSuppliersResponse = await fetch(`${config.baseURL}/supplier/search`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ search: searchQuery }),
-          });
+          // const updatedSuppliersResponse = await fetch(`${config.baseURL}/supplier/search`, {
+          //   method: 'POST',
+          //   headers: {
+          //     'Content-Type': 'application/json',
+          //   },
+          //   body: JSON.stringify({ search: searchQuery }),
+          // });
 
-          if (updatedSuppliersResponse.ok) {
-            const updatedSuppliers = await updatedSuppliersResponse.json();
-            setSuppliers(updatedSuppliers || []);
-            setCount(updatedSuppliers.length || 0);
-          } else {
-            console.error('Error fetching updated suppliers:', await updatedSuppliersResponse.text());
-          }
+          // if (updatedSuppliersResponse.ok) {
+          //   const updatedSuppliers = await updatedSuppliersResponse.json();
+          //   setSuppliers(updatedSuppliers || []);
+          //   setCount(updatedSuppliers.length || 0);
+          // } else {
+          //   console.error('Error fetching updated suppliers:', await updatedSuppliersResponse.text());
+          // }
         } else {
           console.error('Failed to delete supplier', await response.text());
         }
@@ -130,8 +125,6 @@ const StudentsPage = () => {
         <div className={styles.top}>
           <Search
               placeholder="Search for a supplier..."
-              value={searchQuery}
-              onChange={handleSearchChange}
           />
 
           <Link href="/pages/admin/dashboard/suppliers/add">

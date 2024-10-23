@@ -91,17 +91,30 @@ const AddComponent = () => {
         router.push('/equipment/dashboard/components');
       } else {
         const err = await response.json();
-        // alert('You have an error on the form: ' + err.message)
+        alert('You have an error on the form: ' + err.message)
       }
     } catch (error) {
       console.log("error", error.message);
       alert('An error occurred while submitting the form.');
     }
   };
+  const handleAddConditionClick = (e) => {
+    e.preventDefault(); // Prevent form submission
+    setShowPopup(true);
+  };
 
   return (
     <div className={styles.container}>
-      <form onSubmit={handleSubmit} className={styles.form}>
+    
+      <form onSubmit={handleSubmit} >
+     <div className={styles.top}>
+     <button onClick={handleAddConditionClick}>Add Condition Details</button>
+
+
+      {/* <UploadForm />  */}
+
+    </div>
+      <div  className={styles.form} >
         <div className={styles.divInput}>
           <label htmlFor="componentType">Component Type</label>
           <select
@@ -179,8 +192,9 @@ const AddComponent = () => {
           />
         )}
 
-        <button onClick={() => setShowPopup(true)}>Add Condition Details</button>
+       
         <button type="submit">Submit</button>
+        </div>
       </form>
 
       {showPopup && (
@@ -191,7 +205,7 @@ const AddComponent = () => {
         />
       )}
 
-      <UploadForm /> {/* Add the UploadForm component here */}
+      {/* <UploadForm /> Add the UploadForm component here */}
     </div>
   );
 };

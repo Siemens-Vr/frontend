@@ -12,7 +12,19 @@
   flex-wrap: wrap; /* Allows items to wrap onto multiple lines */
   gap: 20px; /* Adds spacing between items */
 }
-
+.top{
+  display: flex;
+  justify-content: flex-end;
+}
+.top button{
+  /* width: 35%; */
+  padding: 10px; /* Adjust padding as needed */
+  margin-left: 25px;
+  background-color: teal;
+  color: var(--text);
+  border-radius: 5px;
+  border: none;
+}
 .divInput {
   display: flex;
   flex-direction: column;
