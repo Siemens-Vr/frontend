@@ -1,0 +1,186 @@
+"use client"
+import React, { useState } from 'react';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import styles from '@/app/styles/project/project/project.module.css';
+
+const Assignees = ({ assignees, setAssignees, uuid, backendUrl }) => {
+    const [newAssignee, setNewAssignee] = useState({ name: '', gender: '', access: '', role: '', dateJoined: '' });
+    const [showModal, setShowModal] = useState(false);
+    const [editingAssigneeIndex, setEditingAssigneeIndex] = useState(null);
+
+    const addAssignee = async (newAssignee) => {
+        try {
+            const response = await fetch(`${backendUrl}/assignees/${uuid}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ assignees: [newAssignee] }),
+            });
+            if (response.ok) {
+                const updatedProject = await response.json();
+                setAssignees(updatedProject.assignees);
+            } else {
+                console.error('Failed to add assignee');
+            }
+        } catch (error) {
+            console.error('Error adding assignee:', error);
+        }
+    };
+
+    const deleteAssignee = async (assigneeId) => {
+        try {
+            const response = await fetch(`${backendUrl}/assignees/${uuid}/${assigneeId}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                setAssignees((prevAssignees) => prevAssignees.filter((assignee) => assignee.uuid !== assigneeId));
+            } else {
+                console.error('Failed to delete assignee');
+            }
+        } catch (error) {
+            console.error('Error deleting assignee:', error);
+        }
+    };
+
+    const updateAssignee = async (updatedAssignee) => {
+        try {
+            const response = await fetch(`${backendUrl}/assignees/${uuid}/${updatedAssignee.uuid}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedAssignee),
+            });
+            if (response.ok) {
+                const updatedData = await response.json();
+                setAssignees((prevAssignees) =>
+                    prevAssignees.map((assignee) => (assignee.uuid === updatedData.uuid ? updatedData : assignee))
+                );
+                resetForm();
+            } else {
+                console.error('Failed to update assignee', response.status, await response.text());
+            }
+        } catch (error) {
+            console.error('Error updating assignee:', error);
+        }
+    };
+
+    const resetForm = () => {
+        setNewAssignee({ name: '', gender: '', access: '', role: '', dateJoined: '' });
+        setShowModal(false);
+        setEditingAssigneeIndex(null);
+    };
+
+    const handleEditClick = (index) => {
+        const assigneeToEdit = assignees[index];
+        setNewAssignee(assigneeToEdit);
+        setEditingAssigneeIndex(index);
+        setShowModal(true);
+    };
+
+    const handleSubmit = async () => {
+        if (editingAssigneeIndex !== null) {
+            await updateAssignee({ ...newAssignee, uuid: assignees[editingAssigneeIndex].uuid });
+        } else {
+            await addAssignee(newAssignee);
+        }
+        resetForm();
+    };
+
+    return (
+        <div className={styles.assignees}>
+            <div className={styles.assigneesHeader}>
+                <h2>Assignees</h2>
+                <button
+                    onClick={() => setShowModal(true)}
+                    className={styles.addButtonTopRight}
+                >
+                    <FaPlus /> Add Assignee
+                </button>
+            </div>
+            <table className={styles.assigneeTable}>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Access</th>
+                        <th>Role</th>
+                        <th>Date Joined</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {assignees?.map((assignee, index) => (
+                        <tr key={assignee.uuid}>
+                            <td>
+                                <img
+                                    src={`https://i.pravatar.cc/150?img=${index + 1}`}
+                                    alt="Profile"
+                                    className={styles.profilePic}
+                                />
+                            </td>
+                            <td>{assignee.name}</td>
+                            <td>{assignee.gender}</td>
+                            <td>{assignee.access}</td>
+                            <td>{assignee.role}</td>
+                            <td>{assignee.dateJoined}</td>
+                            <td>
+                                <FaEdit className={styles.editIcon} onClick={() => handleEditClick(index)} />
+                                <FaTrash className={styles.deleteIcon} onClick={() => deleteAssignee(assignee.uuid)} />
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            {showModal && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modalContent}>
+                        <h3>{editingAssigneeIndex !== null ? 'Edit Assignee' : 'Add Assignee'}</h3>
+                        <input
+                            type="text"
+                            value={newAssignee.name}
+                            onChange={(e) => setNewAssignee({ ...newAssignee, name: e.target.value })}
+                            placeholder="Name"
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="text"
+                            value={newAssignee.gender}
+                            onChange={(e) => setNewAssignee({ ...newAssignee, gender: e.target.value })}
+                            placeholder="Gender"
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="text"
+                            value={newAssignee.access}
+                            onChange={(e) => setNewAssignee({ ...newAssignee, access: e.target.value })}
+                            placeholder="Access Level"
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="text"
+                            value={newAssignee.role}
+                            onChange={(e) => setNewAssignee({ ...newAssignee, role: e.target.value })}
+                            placeholder="Role"
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="date"
+                            value={newAssignee.dateJoined}
+                            onChange={(e) => setNewAssignee({ ...newAssignee, dateJoined: e.target.value })}
+                            className={styles.inputField}
+                        />
+                        <div className={styles.modalActions}>
+                            <button onClick={handleSubmit} className={styles.addButton}>
+                                {editingAssigneeIndex !== null ? 'Update' : 'Add'}
+                            </button>
+                            <button onClick={resetForm} className={styles.closeButton}>
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default Assignees;

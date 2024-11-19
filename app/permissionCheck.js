@@ -12,13 +12,13 @@ const PermissionCheck = ({ user }) => {
       router.push("/403");
     } else if (user.role === "admin") {
       // Redirect to the student dashboard if user has the correct role
-      router.push("/admin/dashboard");
+      router.push("/pages/admin/dashboard");
     } else if (user.role === "equipment") {
       // Redirect to the equipment dashboard if user has the correct role
-      router.push("/equipment/dashboard");
+      router.push("/pages/equipment/dashboard");
     } else if (user.role === "student") {
       // Redirect to the equipment dashboard if user has the correct role
-      router.push("/student/dashboard");
+      router.push("/pages/student/dashboard");
     }else {
       // Redirect to a 403 page if user does not have the required role
       router.push("/403");
