@@ -42,7 +42,7 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`${config.baseURL}/suppliers/${supplier.uuid}/update`, {
+            const response = await fetch(`${config.baseURL}/supplier/${supplier.uuid}/update`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Pagination from '@/app/components/pagination/pagination';
 import Search from '@/app/components/search/searchFilter';
-import styles from '@/app/styles/students/students.module.css';
+import styles from '@/app/styles/supplier/supplier.module.css';
 import Link from "next/link";
 import UpdateSupplierPopup from '@/app/components/suppliers/update';
 import { config } from "/config";
@@ -35,7 +35,9 @@ const StudentsPage = () => {
 
   const fetchSuppliers = async () => {
     try {
-      let url = `${config.baseURL}/suppliers?`;
+      let url = `http://localhost:10600/suppliers?`;
+
+      // let url = `${config.baseURL}/suppliers?`;
       const params = new URLSearchParams();
       
       if (q) params.append('q', q);
@@ -61,10 +63,11 @@ const StudentsPage = () => {
     }
   };
 
-
+console.log(suppliers)
 
 
   const handleUpdateClick = (supplier) => {
+    console.log(supplier)
     setSelectedSupplier(supplier);
     setShowPopup(true);
   };
@@ -94,23 +97,8 @@ const StudentsPage = () => {
 
         if (response.ok) {
           alert('Supplier deleted successfully!');
-
-          // Refetch suppliers after deletion to refresh the list
-          // const updatedSuppliersResponse = await fetch(`${config.baseURL}/supplier/search`, {
-          //   method: 'POST',
-          //   headers: {
-          //     'Content-Type': 'application/json',
-          //   },
-          //   body: JSON.stringify({ search: searchQuery }),
-          // });
-
-          // if (updatedSuppliersResponse.ok) {
-          //   const updatedSuppliers = await updatedSuppliersResponse.json();
-          //   setSuppliers(updatedSuppliers || []);
-          //   setCount(updatedSuppliers.length || 0);
-          // } else {
-          //   console.error('Error fetching updated suppliers:', await updatedSuppliersResponse.text());
-          // }
+          await fetchSuppliers()
+    
         } else {
           console.error('Failed to delete supplier', await response.text());
         }
@@ -136,23 +124,27 @@ const StudentsPage = () => {
             <table className={styles.table}>
               <thead>
               <tr>
+                <td>Project</td>
+                <td>Type</td>
                 <td>Suppliers</td>
-                <td>Description</td>
-                <td>Amount Claimed</td>
+                <td>Item</td>
+                <td>Amount </td>
                 <td>Approver</td>
-                <td>Date Taken To Approver</td>
-                <td>PV No</td>
+                <td>Approval Date</td>
+                <td>PV NO</td>
                 <td>Action</td>
               </tr>
               </thead>
               <tbody>
               {suppliers.map((supplier) => (
                   <tr key={supplier.id}>
+                    <td>{supplier.project}</td>
+                    <td>{supplier.type}</td>
                     <td>{supplier.suppliers}</td>
                     <td>{supplier.itemDescription}</td>
                     <td>{supplier.amountClaimed}</td>
                     <td>{supplier.approver}</td>
-                    <td>{supplier.dateTakenToApprover ? new Date(supplier.dateTakenToApprover).toLocaleDateString() : ''}</td>
+                    <td>{supplier.approvalDate ? new Date(supplier.approvalDate).toLocaleDateString() : ''}</td>
                     <td>{supplier.PvNo}</td>
                     <td>
                       <div className={styles.buttons}>

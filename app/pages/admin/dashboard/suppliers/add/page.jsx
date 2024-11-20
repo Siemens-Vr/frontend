@@ -11,54 +11,63 @@ const SuppliersAddPage = () => {
         amountClaimed: "",
         approver: "",
         dateTakenToApprover: "",
+        approvalDate: "",
+        paymentDate:"",
+        invoiceDate:"",
         dateTakenToFinance: "",
         type: "",
         claimNumber: "",
         pvNo: "",
         accounted: "",
         dateAccounted: "",
-        project:""
+        project:"",
+        approval: null, 
+        payment: null,  
+        invoice: null,  
+        
     });
 
     const [successMessage, setSuccessMessage] = useState("");
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, type, value, files } = e.target;
+    
+        if (type === "file") {
+            setFormData({ ...formData, [name]: files[0] }); // Store the first file
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
+       // Create a FormData object for file and text data
+       const formDataToSend = new FormData();
 
-        // Format the data according to the API requirements
-        const formattedData = {
-            suppliers: formData.suppliers,
-            itemDescription: formData.itemDescription,
-            amountClaimed: parseFloat(formData.amountClaimed),
-            approver: formData.approver,
-            dateTakenToApprover: new Date(formData.dateTakenToApprover).toISOString(),
-            dateTakenToFinance: new Date(formData.dateTakenToFinance).toISOString(),
-            type: formData.type,
-            PvNo: formData.pvNo, // Ensure the backend field name is correct
-            claimNumber: formData.claimNumber,
-            accounted: formData.accounted,
-            dateAccounted: formData.dateAccounted ? new Date(formData.dateAccounted).toISOString() : null,
-            project: formData.project,
+       // Append text fields
+       Object.keys(formData).forEach((key) => {
+           if (key === "approval" || key === "payment" || key === "invoice") {
+               if (formData[key]) {
+                   formDataToSend.append(key, formData[key]); // Append file fields
+               }
+           } else {
+               formDataToSend.append(key, formData[key]);
+           }
+       });
 
-        };
-
-        // console.log("Submitting formatted form data:", formattedData);
-
+       for (let [key, value] of formDataToSend.entries()) {
+        console.log(`${key}:`, value);
+    }
+    
         try {
-            const response = await fetch(`${config.baseURL}/suppliers`, {
+            const response = await fetch(`http://localhost:10600/suppliers`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formattedData),
+                body: formDataToSend, // Use FormData as the request body
             });
 
             if (response.ok) {
-                // console.log("Supplier added successfully");
                 setSuccessMessage("Supplier added successfully!");
                 setFormData({
                     suppliers: "",
@@ -66,13 +75,19 @@ const SuppliersAddPage = () => {
                     amountClaimed: "",
                     approver: "",
                     dateTakenToApprover: "",
+                    approvalDate: "",
+                    paymentDate: "",
+                    invoiceDate: "",
                     dateTakenToFinance: "",
                     type: "",
                     claimNumber: "",
                     pvNo: "",
                     accounted: "",
                     dateAccounted: "",
-                    project:""
+                    project: "",
+                    approval: null, // Reset file fields
+                    payment: null,
+                    invoice: null,
                 });
             } else {
                 console.error("Failed to add Supplier", await response.text());
@@ -81,6 +96,7 @@ const SuppliersAddPage = () => {
             console.error("Error:", error);
         }
     };
+    
 
     const renderFields = () => {
         return (
@@ -203,7 +219,7 @@ const SuppliersAddPage = () => {
                 <div className={styles.divInput}>
                     <label htmlFor="dateTakenToApprover" className={styles.label}>Date Taken To Approver</label>
                     <input
-                        type="datetime-local"
+                        type="date"
                         name="dateTakenToApprover"
                         value={formData.dateTakenToApprover}
                         onChange={handleChange}
@@ -211,9 +227,35 @@ const SuppliersAddPage = () => {
                     />
                 </div>
                 <div className={styles.divInput}>
+                <div className={styles.divInputs}>
+                <div className={styles.divInput}>
+                        <label htmlFor="approval" className={styles.label}>Approval </label>
+                        <input
+                            type="file"
+                            name="approval"
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className={styles.divInput}>
+                        <label htmlFor="approvalDate" className={styles.label}>Approval Date</label>
+                        <input
+                            type="date"
+                            name="approvalDate"
+                            value={formData.approvalDate}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                   
+                  
+                </div>
+                </div>
+           
+                <div className={styles.divInput}>
                 <label htmlFor="dateTakenToFinance" className={styles.label}>Date Taken To Finance</label>
                     <input
-                        type="datetime-local"
+                        type="date"
                         name="dateTakenToFinance"
                         value={formData.dateTakenToFinance}
                         onChange={handleChange}
@@ -221,20 +263,55 @@ const SuppliersAddPage = () => {
                     />
                 </div>
                 <div className={styles.divInput}>
-                    <label htmlFor="type" className={styles.label}>Type</label>
-                    <select
-                        name="type"
-                        value={formData.type}
-                        onChange={handleChange}
-                        required
-                        className={styles.select}
-                    >
-                        <option value="">Select Type</option>
-                        <option value="Claim">Claim</option>
-                        <option value="Imprest">Imprest</option>
-                        <option value="Petty Cash">Petty Cash</option>
-                    </select>
+                    <div className={styles.divInputs}>
+                    <div className={styles.divInput}>
+                            <label htmlFor="payment" className={styles.label}>Payment </label>
+                            <input
+                                type="file"
+                                name="payment"
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className={styles.divInput}>
+                            <label htmlFor="paymentDate" className={styles.label}>Payment Date</label>
+                            <input
+                                type="date"
+                                name="paymentDate"
+                                value={formData.paymentDate}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                     
+
+                    </div>
                 </div>
+
+                <div className={styles.divInput}>
+                    <div className={styles.divInputs}>
+                        <div className={styles.divInput}>
+                            <label htmlFor="invoiceDate" className={styles.label}>Invoice Date</label>
+                            <input
+                                type="date"
+                                name="invoiceDate"
+                                value={formData.invoiceDate}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className={styles.divInput}>
+                            <label htmlFor="invoice" className={styles.label}>Invoice</label>
+                            <input
+                                type="file"
+                                name="invoice"
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    </div>
+                </div>
+            
                 <div className={styles.divInput}>
                     <label htmlFor="project" className={styles.label}>Project</label>
                     <select
@@ -250,6 +327,21 @@ const SuppliersAddPage = () => {
                         <option value="CMU">CMU</option>
 
 
+                    </select>
+                </div>
+                <div className={styles.divInput}>
+                    <label htmlFor="type" className={styles.label}>Type</label>
+                    <select
+                        name="type"
+                        value={formData.type}
+                        onChange={handleChange}
+                        required
+                        className={styles.select}
+                    >
+                        <option value="">Select Type</option>
+                        <option value="Claim">Claim</option>
+                        <option value="Imprest">Imprest</option>
+                        <option value="Petty Cash">Petty Cash</option>
                     </select>
                 </div>
 

@@ -10,6 +10,11 @@
     flex-wrap: wrap;
     gap: 20px;
 }
+.divInputs{
+    display: flex;
+    flex-direction: row;
+    gap:10px;
+}
 
 .divInput {
     display: flex;

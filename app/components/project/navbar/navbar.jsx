@@ -7,7 +7,9 @@ import styles from "@/app/styles/project/navbar/navbar.module.css"; // Create a 
 const Navbar = ({ projectName, onSectionChange, activeSection }) => {
   return (
     <div className={styles.navbarPage}>
-      <h1>{projectName}</h1>
+      <div className={styles.top}>
+        <h1>{projectName}</h1>
+      </div>
       <nav className={styles.navbar}>
         <div className={styles.brand}>
           <h1>Dashboard</h1>

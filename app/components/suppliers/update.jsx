@@ -17,7 +17,19 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
         claimNumber: '',
         accounted: '',
         dateAccounted: '',
-        project:''
+        project: '',
+        approvalDate: '',
+        approvalName: '',
+        approvalPath: '',
+        invoiceDate: '',
+        invoiceName: '',
+        invoicePath: '',
+        paymentDate: '',
+        paymentVoucherName: '',
+        paymentVoucherPath: '',
+        payment: null,
+        invoice: null,
+        approval:null
     });
 
     useEffect(() => {
@@ -27,33 +39,82 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
                 itemDescription: supplier.itemDescription || '',
                 amountClaimed: supplier.amountClaimed || '',
                 approver: supplier.approver || '',
-                dateTakenToApprover: supplier.dateTakenToApprover ? new Date(supplier.dateTakenToApprover).toISOString().slice(0,16) : '',
-                dateTakenToFinance: supplier.dateTakenToFinance ? new Date(supplier.dateTakenToFinance).toISOString().slice(0,16) : '',
+                dateTakenToApprover: supplier.dateTakenToApprover
+                    ? new Date(supplier.dateTakenToApprover).toISOString().slice(0, 16)
+                    : '',
+                dateTakenToFinance: supplier.dateTakenToFinance
+                    ? new Date(supplier.dateTakenToFinance).toISOString().slice(0, 16)
+                    : '',
                 type: supplier.type || '',
                 PvNo: supplier.PvNo || '',
                 claimNumber: supplier.claimNumber || '',
                 accounted: supplier.accounted || '',
-                dateAccounted: supplier.dateAccounted ? new Date(supplier.dateAccounted).toISOString().slice(0,16) : '',
-                project: supplier.project,
-
+                dateAccounted: supplier.dateAccounted
+                    ? new Date(supplier.dateAccounted).toISOString().slice(0, 16)
+                    : '',
+                project: supplier.project || '',
+                approvalDate: supplier.approvalDate
+                    ? new Date(supplier.approvalDate).toISOString().slice(0, 10)
+                    : '',
+                approvalName: supplier.approvalName || '',
+                approvalPath: supplier.approvalPath || '',
+                invoiceDate: supplier.invoiceDate
+                    ? new Date(supplier.invoiceDate).toISOString().slice(0, 10)
+                    : '',
+                invoiceName: supplier.invoiceName || '',
+                invoicePath: supplier.invoicePath || '',
+                paymentDate: supplier.paymentDate
+                    ? new Date(supplier.paymentDate).toISOString().slice(0, 10)
+                    : '',
+                paymentVoucherName: supplier.paymentVoucherName || '',
+                paymentVoucherPath: supplier.paymentVoucherPath || '',
+                payment: null, 
+                invoice: null, 
+                approval: null,
             });
         }
     }, [supplier]);
+    
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSave = async () => {
+        const formDataToSend = new FormData();
+    
+        // Append text fields, excluding the fields that should not be sent
+        const excludedFields = [
+            'approvalName',
+            'approvalPath',
+            'paymentVoucherName',
+            'paymentVoucherPath',
+            'invoiceName',
+            'invoicePath',
+        ];
+    
+        Object.keys(formData).forEach((key) => {
+            if (!excludedFields.includes(key) && !['payment', 'invoice', 'approval'].includes(key)) {
+                formDataToSend.append(key, formData[key]);
+            }
+        });
+    
+        // Append files if selected
+        if (formData.payment) formDataToSend.append('payment', formData.payment);
+        if (formData.invoice) formDataToSend.append('invoice', formData.invoice);
+        if (formData.approval) formDataToSend.append('approval', formData.approval);
+    
+        // Log the FormData entries before sending
+        console.log('FormData to send:');
+        for (let [key, value] of formDataToSend.entries()) {
+            console.log(`${key}:`, value);
+        }
         try {
-            const response = await fetch(`${config.baseURL}/suppliers/${supplier.uuid}/update`, {
+            const response = await fetch(`http://localhost:10600/suppliers/${supplier.uuid}/update`, {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
+                body: formDataToSend, // Send FormData
             });
-
+    
             if (response.ok) {
                 alert('Supplier updated successfully!');
                 onSave();
@@ -64,6 +125,9 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
             console.error('Error:', error);
         }
     };
+    
+    
+    
 
     const renderFields = () => {
         switch (formData.type) {
@@ -225,6 +289,49 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
                         />
                     </div>
                     <div className={styles.inputGroup}>
+                        <label htmlFor="approvalDate">Approval Date</label>
+                        <input
+                            type="date"
+                            id="approvalDate"
+                            name="approvalDate"
+                            value={formData.approvalDate}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="approvalName">Approval Document</label>
+                        <div className={styles.doc}>
+                            <div className={styles.docs}>
+                                <input
+                                    type="text"
+                                    id="approvalName"
+                                    name="approvalName"
+                                    value={formData.approvalName}
+                                    onChange={handleChange}
+                                    placeholder="Approval document name"
+                                    required
+                                />
+                                {formData.approvalPath && (
+                                    <a style = {{color: 'black'}}
+                                        href={`http://localhost:10600${formData.approvalPath}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={styles.fileLink}
+                                    >
+                                        Open File
+                                    </a>
+                                )}
+                            </div>
+                            <input
+                                type="file"
+                                id="approval"
+                                name="approval"
+                                onChange={(e) => setFormData({ ...formData, approval: e.target.files[0] })}
+                            />
+                        </div>
+                    </div>
+                    <div className={styles.inputGroup}>
                         <label htmlFor="dateTakenToFinance">Date Taken To Finance</label>
                         <input
                             type="datetime-local"
@@ -235,6 +342,96 @@ const UpdateSupplierPopup = ({ supplier, onClose, onSave }) => {
                             required
                         />
                     </div>
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="invoiceDate">Invoice Date</label>
+                        <input
+                            type="date"
+                            id="invoiceDate"
+                            name="invoiceDate"
+                            value={formData.invoiceDate}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="invoiceName">Invoice</label>
+                        <div className={styles.doc}>
+                        <div className={styles.docs}>
+                            <input
+                                type="text"
+                                id="invoiceName"
+                                name="invoiceName"
+                                value={formData.invoiceName}
+                                onChange={handleChange}
+                                placeholder="Invoice document name"
+                                required
+                            />
+                            {formData.invoicePath && (
+                                <a
+                                    href={`http://localhost:10600${formData.invoicePath}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.fileLink}
+                                >
+                                    Open File
+                                </a>
+                            )}
+                            </div>
+                                <input
+                                    type="file"
+                                    id="invoice"
+                                    name="invoice"
+                                    onChange={(e) => setFormData({ ...formData, invoice: e.target.files[0] })}
+                                />
+                        </div>
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="paymentDate">Payment Date</label>
+                        <input
+                            type="date"
+                            id="paymentDate"
+                            name="paymentDate"
+                            value={formData.paymentDate}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="paymentVoucherName">Payment Voucher</label>
+                        <div className={styles.doc}>
+                            <div className={styles.docs}>
+                                <input
+                                    type="text"
+                                    id="paymentVoucherName"
+                                    name="paymentVoucherName"
+                                    value={formData.paymentVoucherName}
+                                    onChange={handleChange}
+                                    placeholder="Payment voucher name"
+                                    required
+                                />
+                                {formData.paymentVoucherPath && (
+                                    <a
+                                        href={`http://localhost:10600${formData.paymentVoucherPath}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={styles.fileLink}
+                                    >
+                                        Open File
+                                    </a>
+                                )}
+
+                            </div>
+
+                             <input
+                                type="file"
+                                id="payment"
+                                name="payment"
+                                onChange={(e) => setFormData({ ...formData, payment: e.target.files[0] })}
+                            />
+                        </div>
+                    </div>
+
                     <div className={styles.inputGroup}>
                         <label htmlFor="type">Type</label>
                         <select

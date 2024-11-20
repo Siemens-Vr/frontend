@@ -39,6 +39,43 @@
     font-weight: bold;
     color: black; /* Set labels to black */
 }
+.doc {
+    width: 100%;
+    border: 1px solid var(--textSoft);
+    border-radius: 5px;
+    display: flex;
+    background: white; /* Changed the input background to white */
+    color: black; /* Set the input text color to black */
+    gap:10px;
+    align-items: center;
+    /* justify-content: space-between; */
+}
+.inputGroup .doc input{
+    width:40%;
+    margin-left: auto;
+    font-size: 12px;
+    border:none;
+
+}
+.inputGroup .docs{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+    justify-content: space-between;
+    /* align-items: center; */
+    gap:10px;
+    border: 1px solid var(--textSoft);
+    /* padding: 0px 10px; */
+
+}
+
+.inputGroup .doc .docs input{
+    width:100%;
+}
+.inputGroup .doc a{
+    margin-left: 10px;
+    font-size: 12px;
+}
 
 .inputGroup input,
 .inputGroup select {

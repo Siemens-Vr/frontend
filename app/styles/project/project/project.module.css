@@ -1,3 +1,29 @@
+.actionButtons {
+    display: flex;
+    justify-content: center; /* Center the buttons horizontally */
+    gap: 10px; /* Add spacing between buttons */
+    align-items: center; /* Center the buttons vertically */
+}
+.navbarWithDropdown {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.projectDropdown {
+    margin-left: auto;
+}
+
+.dropdown {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #1a253a;
+    border-radius: 4px;
+    color: black;
+}
+
+
 
 
 .projectInfoContainer {
@@ -218,7 +244,12 @@
     background-color: #1c86ee;
 }
 
-
+.phases .top{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0px;
+}
 .phaseCards {
     display: flex;
     flex-wrap: wrap;
@@ -228,13 +259,23 @@
 .phaseCard {
     background-color: #1a253a;
     border-radius: 8px;
-    padding: 15px;
-    width: 300px;
-    height: 200px;
-    text-align: center;
+    padding: 10px;
+    width: 250px;
+    height: 150px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
+}
+.phaseCard .top{
+    display: flex;
+    flex-direction: space-between;
+    margin-bottom: 10px;
+}
+.phaseCard .top h3{
+    text-transform: capitalize;
+    font-size: 1.3em;
+    font-weight: 600;
+    color:#1c86ee;
 }
 
 .phaseCard:hover {
@@ -251,10 +292,16 @@
 
 .editIcon, .deleteIcon {
     cursor: pointer;
-    color: #ffffff;
+
     transition: color 0.2s;
 }
+.editIcon {
+    color: green;
+}
 
+.deleteIcon {
+    color: #ff4d4f;
+}
 .editIcon:hover {
     color: #1e90ff;
 }
@@ -1087,5 +1134,3 @@
 .addButton:hover {
     background-color: #43a047;
 }
-
-

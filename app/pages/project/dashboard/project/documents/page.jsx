@@ -88,7 +88,7 @@ const Documents = ({uuid}) => {
 
     useEffect(() => {
         fetchDocumentsAndFolders();
-    }, []);
+    }, [uuid]);
 
 
 

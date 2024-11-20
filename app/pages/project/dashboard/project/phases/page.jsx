@@ -1,23 +1,44 @@
-"use client"
-import React, {useState, useEffect} from 'react';
-import styles from '@/app/styles/project/project/project.module.css';
-import {FaEdit, FaPlus, FaTimes, FaTrash} from "react-icons/fa";
+"use client";
+import React, { useState, useEffect } from "react";
+import styles from "@/app/styles/project/project/project.module.css";
+import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 
-const Phases = ({uuid,backendUrl,phases, setPhases}) => {
-    const [newPhase, setNewPhase] = useState({ name: '', startDate: '', endDate: '', status: '',deliverables: [] });
+const Phases = ({ uuid, backendUrl }) => {
+    const [phases, setPhases] = useState([]);
+    const [newPhase, setNewPhase] = useState({
+        name: "",
+        startDate: "",
+        endDate: "",
+        status: "",
+        deliverables: [],
+    });
+    const [editPhaseData, setEditPhaseData] = useState(null); // State for editing phase
     const [showPhaseInput, setShowPhaseInput] = useState(false);
-    const [newPhaseDeliverable, setNewPhaseDeliverable] = useState({ name: '', status: '', assignees: [], budget: 0 });
-    const [showPhaseDeliverableInput, setShowPhaseDeliverableInput] = useState(false);
-
-
-// Handlers for Phases CRUD
     const [isAdding, setIsAdding] = useState(false);
-    const [addPhaseError, setAddPhaseError] = useState('');
+    const [addPhaseError, setAddPhaseError] = useState("");
+
+    const fetchPhases = async () => {
+        try {
+            const response = await fetch(`${backendUrl}/phases/${uuid}`);
+            if (response.ok) {
+                const data = await response.json();
+                setPhases(data.phases || []);
+            } else {
+                console.error("Failed to fetch phases");
+            }
+        } catch (error) {
+            console.error("Error fetching phases:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchPhases();
+    }, [uuid, backendUrl]);
 
     const addPhase = async () => {
         if (newPhase.name.trim()) {
             setIsAdding(true);
-            setAddPhaseError('');
+            setAddPhaseError("");
 
             try {
                 const payload = {
@@ -32,469 +53,241 @@ const Phases = ({uuid,backendUrl,phases, setPhases}) => {
                     ],
                 };
 
-                console.log("Payload:", JSON.stringify(payload)); // Confirm payload format
                 const response = await fetch(`${backendUrl}/phases/${uuid}/`, {
-                    method: 'POST',
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
                     body: JSON.stringify(payload),
                 });
 
                 if (response.ok) {
-                    const createdPhase = await response.json();
-                    console.log("Created Phase:", createdPhase); // Confirm backend response
-                    setPhases([...phases, createdPhase]);
-                    setNewPhase({ name: '', startDate: '', endDate: '', status: '', deliverables: [] });
+                    fetchPhases();
                     setShowPhaseInput(false);
+                    setNewPhase({
+                        name: "",
+                        startDate: "",
+                        endDate: "",
+                        status: "",
+                        deliverables: [],
+                    });
                 } else {
                     const errorText = await response.text();
                     console.error("Failed to add phase:", errorText);
-                    setAddPhaseError('Failed to add phase.');
+                    setAddPhaseError("Failed to add phase.");
                 }
             } catch (error) {
                 console.error("Error in addPhase function:", error);
-                setAddPhaseError('Error occurred while adding phase.');
+                setAddPhaseError("Error occurred while adding phase.");
             } finally {
                 setIsAdding(false);
             }
         } else {
-            alert('Phase name is required!');
+            alert("Phase name is required!");
         }
     };
 
-
-
-    const deletePhase = (index) => setPhases(phases.filter((_, i) => i !== index));
-
-    const editPhase = (index) => {
-        const editedName = prompt('Edit Phase Name:');
-        if (editedName) {
-            const updated = [...phases];
-            updated[index].name = editedName;
-            setPhases(updated);
-        }
-    };
-    const [selectedPhase, setSelectedPhase] = useState(null);
-
-// Handle phase selection
-    const handlePhaseClick = (index) => setSelectedPhase(phases[index]);
-
-// Add new phase deliverable
-    const addPhaseDeliverable = async () => {
-        if (selectedPhase) {
-            if (newPhaseDeliverable.name.trim()) {
-                try {
-                    const deliverablePayload = {
-                        deliverables: [
-                            {
-                                name: newPhaseDeliverable.name,
-                                status: newPhaseDeliverable.status,
-                                startDate: newPhaseDeliverable.startDate,
-                                expectedFinish: newPhaseDeliverable.expectedFinish,
-                            }
-                        ]
-                    };
-
-                    // Send deliverable to backend
-                    const response = await fetch(`${backendUrl}/deliverables/${uuid}/${selectedPhase.uuid}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(deliverablePayload),
-                    });
-                    console.log('Response Status:', response.status);
-                    console.log('Response Body:', await response.text());
-
-                    if (!response.ok) {
-                        throw new Error('Error adding deliverable to backend');
-                    }
-
-                    // Update local state with new deliverable
-                    const updatedPhases = phases.map((phase) =>
-                        phase.name === selectedPhase.name
-                            ? { ...phase, deliverables: [...phase.deliverables, newPhaseDeliverable] }
-                            : phase
-                    );
-                    setPhases(updatedPhases);
-
-                    // Reset form fields
-                    setNewPhaseDeliverable({ name: '', status: '', startDate: '', expectedFinish: '' });
-                    setShowPhaseDeliverableInput(false);
-                } catch (error) {
-                    console.error('Failed to add deliverable:', error);
-                }
-            } else {
-                alert('Deliverable name is required!');
-            }
-        } else {
-            alert('Please select a phase to add a deliverable!');
-        }
-    };
-
-
-    const handleDeletePhaseDeliverable = async (deliverableIndex) => {
-        const deliverableToDelete = selectedPhase.deliverables[deliverableIndex];
-
+    const deletePhase = async (index) => {
+        const phaseToDelete = phases[index];
         try {
-            // Send DELETE request to backend
-            const response = await fetch(`${backendUrl}/deliverables/${uuid}/${selectedPhase.uuid}/${deliverableToDelete.uuid}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            const response = await fetch(`${backendUrl}/phases/${uuid}/${phaseToDelete.uuid}`, {
+                method: "DELETE",
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to delete deliverable from backend');
+            if (response.ok) {
+                setPhases((prevPhases) => prevPhases.filter((_, i) => i !== index));
+                fetchPhases();
+            } else {
+                console.error("Failed to delete phase");
             }
-
-            // Update local state to remove the deliverable
-            const updatedDeliverables = selectedPhase.deliverables.filter((_, i) => i !== deliverableIndex);
-            const updatedPhases = phases.map((phase) =>
-                phase.uuid === selectedPhase.uuid ? { ...phase, deliverables: updatedDeliverables } : phase
-            );
-
-            setPhases(updatedPhases);
-            setSelectedPhase({ ...selectedPhase, deliverables: updatedDeliverables });
         } catch (error) {
-            console.error('Error deleting deliverable:', error);
+            console.error("Error deleting phase:", error);
         }
     };
 
-
-// Edit phase deliverable
-    const handleEditPhaseDeliverable = async (index) => {
-        const deliverable = selectedPhase.deliverables[index];
-
-        const editedName = prompt('Edit Deliverable Name:', deliverable.name);
-        const editedStatus = prompt('Edit Deliverable Status:', deliverable.status);
-        const editedStartDate = prompt('Edit Start Date (YYYY-MM-DD):', deliverable.startDate);
-        const editedExpectedFinish = prompt('Edit Expected Finish Date (YYYY-MM-DD):', deliverable.expectedFinish);
-
-        if (editedName || editedStatus || editedStartDate || editedExpectedFinish) {
-            const updatedDeliverable = {
-                ...deliverable,
-                name: editedName ? editedName.trim() : deliverable.name,
-                status: editedStatus ? editedStatus.trim() : deliverable.status,
-                startDate: editedStartDate ? editedStartDate.trim() : deliverable.startDate,
-                expectedFinish: editedExpectedFinish ? editedExpectedFinish.trim() : deliverable.expectedFinish,
-            };
-
-            const updatedDeliverables = selectedPhase.deliverables.map((item, idx) =>
-                idx === index ? updatedDeliverable : item
-            );
-
-            const updatedPhases = phases.map((phase) =>
-                phase.name === selectedPhase.name ? { ...phase, deliverables: updatedDeliverables } : phase
-            );
-
-            setPhases(updatedPhases);
-
-            // Send the update to the backend
+    const updatePhase = async () => {
+        if (editPhaseData) {
             try {
-                const response = await fetch(`${backendUrl}/deliverables/${uuid}/${selectedPhase.uuid}/${deliverable.uuid}`, {
-                    method: 'PUT', // PUT request for update
+                const response = await fetch(`${backendUrl}/phases/${uuid}/${editPhaseData.uuid}`, {
+                    method: "PUT",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(updatedDeliverable),
+                    body: JSON.stringify(editPhaseData),
                 });
 
                 if (response.ok) {
-                    console.log("Deliverable updated successfully on the backend.");
+                    fetchPhases();
+                    setEditPhaseData(null); // Close the edit modal
                 } else {
-                    console.error("Failed to update deliverable on the backend:", await response.text());
+                    console.error("Failed to update phase");
                 }
             } catch (error) {
-                console.error("Error updating deliverable:", error);
+                console.error("Error updating phase:", error);
             }
         }
     };
 
-
-    const downloadBudgetCSV = (phase) => {
-        const headers = ['Deliverable Name', 'Budget'];
-        const rows = phase.deliverables.map(d => [d.name, d.budget]);
-
-        // Generate CSV content
-        let csvContent = headers.join(',') + '\n' +
-            rows.map(row => row.join(',')).join('\n');
-
-        // Create a downloadable link
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `${phase.name}_budget.csv`;
-        link.click();
-    };
-
-    useEffect(() => {
-        if (selectedPhase) {
-            document.body.classList.add('noScroll');
-        } else {
-            document.body.classList.remove('noScroll');
-        }
-
-        return () => {
-            document.body.classList.remove('noScroll');
-        };
-    }, [selectedPhase]);
-
-
     return (
         <div className={styles.phases}>
-            <h2>Phases</h2>
+            <div className = {styles.top}>
+                <h2>Phases</h2>
+                <button
+                    onClick={() => setShowPhaseInput(true)}
+                    className={styles.addButton}
+                >
+                    <FaPlus /> Add Phase
+                </button>
+            </div>
+            
             <div className={styles.phaseCards}>
                 {phases.map((phase, index) => (
-                    <div
-                        key={index}
-                        className={styles.phaseCard}
-                        onClick={() => handlePhaseClick(index)}
-                    >
-                        <h3>{phase.name}</h3>
-                        <p><strong>Start Date:</strong> {phase.startDate} </p>
-                        <p><strong>End Date:</strong> {phase.endDate}</p>
-                        <p><strong>Status:</strong> {phase.status}</p>
-                        <div className={styles.cardActions}>
-                            <FaEdit
-                                className={styles.editIcon}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    editPhase(index);
-                                }}
-                            />
-                            <FaTrash
-                                className={styles.deleteIcon}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    deletePhase(index);
-                                }}
-                            />
+                    <div key={index} className={styles.phaseCard}>
+                        <div className={styles.top}>
+                            <h3>{phase.name}</h3>
+                            <div className={styles.cardActions}>
+                                <FaEdit
+                                    className={styles.editIcon}
+                                    onClick={() => setEditPhaseData(phase)}
+                                />
+                                <FaTrash
+                                    className={styles.deleteIcon}
+                                    onClick={() => deletePhase(index)}
+                                />
+                            </div>
                         </div>
+
+                        <p>
+                        <strong>Start Date:</strong>{" "}
+                        {phase.startDate ? new Date(phase.startDate).toLocaleDateString() : ""}
+                        </p>
+                        <p>
+                        <strong>End Date:</strong>{" "}
+                        {phase.endDate ? new Date(phase.endDate).toLocaleDateString() : ""}
+                        </p>
+                        <p>
+                            <strong>Status:</strong> {phase.status}
+                        </p>
+
                     </div>
                 ))}
             </div>
 
-            {selectedPhase && (
-                <>
-                    <div className={styles.overlay} onClick={() => setSelectedPhase(null)}/>
-                    <div className={styles.phaseDetails}>
-                        <button
-                            className={styles.closeButtonTopRight}
-                            onClick={() => setSelectedPhase(null)}
+
+
+            {/* Add Phase Modal */}
+            {showPhaseInput && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modalContent}>
+                        <h3>Add New Phase</h3>
+                        <input
+                            type="text"
+                            value={newPhase.name}
+                            onChange={(e) => setNewPhase({ ...newPhase, name: e.target.value })}
+                            placeholder="Phase Name"
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="date"
+                            value={newPhase.startDate}
+                            onChange={(e) =>
+                                setNewPhase({ ...newPhase, startDate: e.target.value })
+                            }
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="date"
+                            value={newPhase.endDate}
+                            onChange={(e) =>
+                                setNewPhase({ ...newPhase, endDate: e.target.value })
+                            }
+                            className={styles.inputField}
+                        />
+                        <select
+                            value={newPhase.status}
+                            onChange={(e) =>
+                                setNewPhase({ ...newPhase, status: e.target.value })
+                            }
+                            className={styles.inputField}
                         >
-                            ✕
-                        </button>
-                        <div className={styles.phaseDetailsContent}>
-                            <h3>Phase Details: {selectedPhase.name}</h3>
-                            <div className={styles.phaseInfoRow}>
-                                <p><strong>Status:</strong> {selectedPhase.status}</p>
-                                <p><strong>Start:</strong> {selectedPhase.startDate}</p>
-                                <p><strong>End:</strong> {selectedPhase.endDate}</p>
-                                <button
-                                    className={styles.updateButton}
-                                    onClick={() => editPhase(selectedPhase)}
-                                >
-                                    Update
-                                </button>
-                            </div>
-
-                            <h4>Phase Deliverables:</h4>
-                            <table className={styles.deliverableTable}>
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                    <th>startDate</th>
-                                    <th>Expected Finish Date</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {selectedPhase.deliverables.map((deliverable, i) => (
-                                    <tr key={i}>
-                                        <td>{deliverable.name}</td>
-                                        <td>{deliverable.status}</td>
-                                        <td>{deliverable.startDate}</td>
-                                        <td>${deliverable.expectedFinish}</td>
-                                        <td className={styles.actionButtons}>
-                                            <button
-                                                onClick={() => handleEditPhaseDeliverable(i)}
-                                                className={styles.editButton}
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeletePhaseDeliverable(i)}
-                                                className={styles.deleteButton}
-                                            >
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-
-                            {showPhaseDeliverableInput && (
-                                <div className={styles.newDeliverableForm}>
-                                    <input
-                                        type="text"
-                                        placeholder="Deliverable Name"
-                                        value={newPhaseDeliverable.name}
-                                        onChange={(e) =>
-                                            setNewPhaseDeliverable({
-                                                ...newPhaseDeliverable,
-                                                name: e.target.value,
-                                            })
-                                        }
-                                        className={styles.inputField}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Status"
-                                        value={newPhaseDeliverable.status}
-                                        onChange={(e) =>
-                                            setNewPhaseDeliverable({
-                                                ...newPhaseDeliverable,
-                                                status: e.target.value,
-                                            })
-                                        }
-                                        className={styles.inputField}
-                                    />
-                                    <input
-                                        type="date"
-                                        placeholder="Start Date"
-                                        value={newPhaseDeliverable.startDate}
-                                        onChange={(e) =>
-                                            setNewPhaseDeliverable({
-                                                ...newPhaseDeliverable,
-                                                startDate: e.target.value,
-                                            })
-                                        }
-                                        className={styles.inputField}
-                                    />
-                                    <input
-                                        type="date"
-                                        placeholder="Expected Finish"
-                                        value={newPhaseDeliverable.expectedFinish}
-                                        onChange={(e) =>
-                                            setNewPhaseDeliverable({
-                                                ...newPhaseDeliverable,
-                                                expectedFinish: e.target.value,
-                                            })
-                                        }
-                                        className={styles.inputField}
-                                    />
-                                    <button
-                                        onClick={addPhaseDeliverable}
-                                        className={styles.primaryButton}
-                                    >
-                                        <FaPlus className={styles.plusIcon}/> Add Deliverable
-                                    </button>
-                                </div>
-                            )}
-
-                            <button
-                                onClick={() =>
-                                    setShowPhaseDeliverableInput(!showPhaseDeliverableInput)
-                                }
-                                className={styles.toggleButton}
-                            >
-                                {showPhaseDeliverableInput ? <FaTimes/> : <FaPlus/>}
+                            <option value="">Select Status</option>
+                            <option value="todo">To Do</option>
+                            <option value="progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <div className={styles.modalActions}>
+                            <button onClick={addPhase} disabled={isAdding} className={styles.addButton}>
+                                {isAdding ? "Adding..." : "Add"}
                             </button>
-
-                            <h4>Budget Summary</h4>
-                            <table className={styles.budgetTable}>
-                                <thead>
-                                <tr>
-                                    <th>Deliverable</th>
-                                    <th>Budget ($)</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {selectedPhase.deliverables.map((deliverable, i) => (
-                                    <tr key={i}>
-                                        <td>{deliverable.name}</td>
-                                        <td>${deliverable.budget}</td>
-                                    </tr>
-                                ))}
-                                <tr className={styles.totalRow}>
-                                    <td><strong>Total Budget</strong></td>
-                                    <td>
-                                        <strong>
-                                            ${selectedPhase.deliverables.reduce(
-                                            (sum, d) => sum + parseFloat(d.budget || 0),
-                                            0
-                                        )}
-                                        </strong>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-
                             <button
-                                onClick={() => downloadBudgetCSV(selectedPhase)}
-                                className={styles.downloadButton}
+                                onClick={() => setShowPhaseInput(false)}
+                                className={styles.closeButton}
                             >
-                                Download Budget CSV
+                                Cancel
+                            </button>
+                        </div>
+                        {addPhaseError && <p className={styles.errorMessage}>{addPhaseError}</p>}
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Phase Modal */}
+            {editPhaseData && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modalContent}>
+                        <h3>Edit Phase</h3>
+                        <input
+                            type="text"
+                            value={editPhaseData.name}
+                            onChange={(e) =>
+                                setEditPhaseData({ ...editPhaseData, name: e.target.value })
+                            }
+                            placeholder="Phase Name"
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="date"
+                            value={editPhaseData.startDate}
+                            onChange={(e) =>
+                                setEditPhaseData({ ...editPhaseData, startDate: e.target.value })
+                            }
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="date"
+                            value={editPhaseData.endDate}
+                            onChange={(e) =>
+                                setEditPhaseData({ ...editPhaseData, endDate: e.target.value })
+                            }
+                            className={styles.inputField}
+                        />
+                        <select
+                            value={editPhaseData.status}
+                            onChange={(e) =>
+                                setEditPhaseData({ ...editPhaseData, status: e.target.value })
+                            }
+                            className={styles.inputField}
+                        >
+                            <option value="todo">To Do</option>
+                            <option value="progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <div className={styles.modalActions}>
+                            <button onClick={updatePhase} className={styles.addButton}>
+                                Update
+                            </button>
+                            <button
+                                onClick={() => setEditPhaseData(null)}
+                                className={styles.closeButton}
+                            >
+                                Cancel
                             </button>
                         </div>
                     </div>
-                </>
-            )}
-
-
-            <button onClick={() => setShowPhaseInput(!showPhaseInput)} className={styles.addButton}>
-                <FaPlus/> {showPhaseInput ? 'Cancel' : 'Add Phase'}
-            </button>
-
-            {showPhaseInput && (
-                <>
-                    <input
-                        type="text"
-                        value={newPhase.name}
-                        onChange={(e) =>
-                            setNewPhase({...newPhase, name: e.target.value})
-                        }
-                        placeholder="Phase Name"
-                        className={styles.inputField}
-                    />
-                    <input
-                        type="date"
-                        value={newPhase.startDate}
-                        onChange={(e) =>
-                            setNewPhase({...newPhase, startDate: e.target.value})
-                        }
-                        className={styles.inputField}
-                    />
-                    <input
-                        type="date"
-                        value={newPhase.endDate}
-                        onChange={(e) =>
-                            setNewPhase({...newPhase, endDate: e.target.value})
-                        }
-                        className={styles.inputField}
-                    />
-                    <input
-                        type="text"
-                        value={newPhase.status}
-                        onChange={(e) =>
-                            setNewPhase({...newPhase, status: e.target.value})
-                        }
-                        placeholder="Status"
-                        className={styles.inputField}
-                    />
-                    <button onClick={addPhase} className={styles.addButton} disabled={isAdding}>
-                        {isAdding ? 'Adding...' : 'Confirm'}
-                    </button>
-                    {addPhaseError && <p className={styles.errorMessage}>{addPhaseError}</p>}
-                </>
+                </div>
             )}
         </div>
-    )
-}
+    );
+};
 
 export default Phases;

@@ -117,12 +117,12 @@ const Sidebar = async ({ dashboardType }) => {
     case 'equipment':
       menuItems = equipmentMenuItems;
       break;
-    // case 'project':
-    //   menuItems = projectsMenuItems;
-    //   break;
+    case 'project':
+      menuItems = adminMenuItems;
+      break;
    
     default:
-      menuItems = studentMenuItems; // Default to studentMenuItems if dashboardType is not recognized
+      menuItems = adminMenuItems; // Default to studentMenuItems if dashboardType is not recognized
       break;
   }
 

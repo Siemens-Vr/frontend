@@ -13,10 +13,12 @@ const ProjectCard = ({ title, status, startDate, endDate }) => {
                 <span className={statusClass}>Project Status - {status}</span>
             </div>
             <p className={styles.dates}>
-                Start Date - {startDate}
-            </p> <p className={styles.dates}>
-                End Date - {endDate}
+                Start Date - {new Date(startDate).toLocaleDateString()}
             </p>
+            <p className={styles.dates}>
+                End Date - {new Date(endDate).toLocaleDateString()}
+            </p>
+
         </div>
     );
 };
