@@ -10,6 +10,9 @@ const Dashboard = () => {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const router = useRouter();
+    const [editModalOpen, setEditModalOpen] = useState(false); // Edit modal visibility
+    const [editProjectData, setEditProjectData] = useState(null); // Project being edited
+
 
     const [searchTerm, setSearchTerm] = useState(searchParams.get('query') || '');
     const [filter, setFilter] = useState('All Projects');
@@ -18,6 +21,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedProject, setSelectedProject] = useState(null); // To store the selected project for actions
+    const [isSaving, setIsSaving] = useState(false); // To handle the saving state
 
     // Fetch projects from backend
     const fetchProjects = async () => {
@@ -102,6 +106,7 @@ const Dashboard = () => {
         fetchProjects(); // Refresh project list when modal closes
     };
 
+
     const addProject = async (newProject) => {
         // Call the API to add the new project
         const response = await fetch("https://erpbackend-6vez.onrender.com/projects", {
@@ -126,6 +131,72 @@ const Dashboard = () => {
 
     if (loading) return <p>Loading projects...</p>;
     if (error) return <p>Error: {error}</p>;
+
+    // Open edit modal with project data
+    const handleEdit = (project) => {
+        setEditProjectData(project);
+        setEditModalOpen(true);
+    };
+
+// Close edit modal
+    const closeEditModal = () => {
+        setEditModalOpen(false);
+        setEditProjectData(null);
+        fetchProjects(); // Refresh projects after editing
+    };
+
+
+
+    const updateProject = async () => {
+        if (editProjectData) {
+            setIsSaving(true); // Start saving state
+
+            // Clean the payload to only include valid fields
+            const cleanedProjectData = {
+                name: editProjectData.name,
+                description: editProjectData.description,
+                status: editProjectData.status,
+                budget: editProjectData.budget,
+                funding: editProjectData.funding,
+                startDate: editProjectData.startDate,
+                endDate: editProjectData.endDate,
+                // Clean nested arrays if necessary
+                assignees: editProjectData.assignees?.map((assignee) => ({
+                    name: assignee.name,
+                    gender: assignee.gender,
+                    access: assignee.access,
+                    role: assignee.role,
+                    dateJoined: assignee.dateJoined,
+                })),
+            };
+
+            try {
+                const response = await fetch(
+                    `https://erpbackend-6vez.onrender.com/projects/${editProjectData.uuid}`,
+                    {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(cleanedProjectData),
+                    }
+                );
+
+                if (response.ok) {
+                    closeEditModal(); // Close the modal on success
+                } else {
+                    const errorData = await response.json();
+                    console.error('Failed to update the project:', errorData);
+                }
+            } catch (error) {
+                console.error('Error while updating project:', error);
+            } finally {
+                setIsSaving(false); // End saving state
+            }
+        }
+    };
+
+
+
+
 
     return (
         <div className={styles.dashboardContainer}>
@@ -186,6 +257,7 @@ const Dashboard = () => {
                                             {selectedProject === project && (
                                                 <div className={styles.menuOptions}>
                                                     <button onClick={() => handleCardClick(project)}>View</button>
+                                                    <button onClick={() => handleEdit(project)}>Edit</button>
                                                     <button onClick={() => handleDelete(project.uuid)}>Delete</button>
                                                 </div>
                                             )}
@@ -199,6 +271,70 @@ const Dashboard = () => {
                     ))}
                 </section>
             </div>
+            {editModalOpen && editProjectData && (
+                <div className={styles.editModalOverlay}>
+                    <div className={styles.editModalContent}>
+                        <h3>Edit Project</h3>
+                        <input
+                            type="text"
+                            value={editProjectData.name}
+                            onChange={(e) =>
+                                setEditProjectData({ ...editProjectData, name: e.target.value })
+                            }
+                            placeholder="Project Name"
+                            className={styles.editInputField}
+                        />
+                        <select
+                            value={editProjectData.status}
+                            onChange={(e) =>
+                                setEditProjectData({ ...editProjectData, status: e.target.value })
+                            }
+                            className={styles.editInputField}
+                        >
+                            <option value="todo">Todo</option>
+                            <option value="progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <input
+                            type="date"
+                            value={editProjectData.startDate}
+                            onChange={(e) =>
+                                setEditProjectData({ ...editProjectData, startDate: e.target.value })
+                            }
+                            className={styles.editInputField}
+                        />
+                        <input
+                            type="date"
+                            value={editProjectData.endDate}
+                            onChange={(e) =>
+                                setEditProjectData({ ...editProjectData, endDate: e.target.value })
+                            }
+                            className={styles.editInputField}
+                        />
+                        <div className={styles.editModalActions}>
+                            <button
+                                onClick={updateProject}
+                                disabled={isSaving} // Disable the button while saving
+                                className={`${styles.editSaveButton} ${isSaving ? styles.saving : ''}`}
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <span className={styles.loadingDots}>Saving Changes</span>
+                                    </>
+                                ) : (
+                                    'Save Changes'
+                                )}
+                            </button>
+                            <button onClick={closeEditModal} className={styles.editCancelButton}>
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
+
 
             <AddProjectModal
                 isModalOpen={isModalOpen}

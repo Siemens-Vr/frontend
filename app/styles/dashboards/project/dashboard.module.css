@@ -172,3 +172,79 @@
   background-color: #f0f0f0; /* Light background on hover */
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.editModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.editModalContent {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  max-width: 90%;
+  color: black;
+}
+
+.editInputField {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.editModalActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.editSaveButton {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.editSaveButton:hover {
+  background-color: #45a049;
+}
+
+.editCancelButton {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.editCancelButton:hover {
+  background-color: #da190b;
+}

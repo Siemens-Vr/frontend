@@ -4,6 +4,26 @@
     gap: 10px; /* Add spacing between buttons */
     align-items: center; /* Center the buttons vertically */
 }
+.navbarWithDropdown {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.projectDropdown {
+    margin-left: auto;
+}
+
+.dropdown {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #1a253a;
+    border-radius: 4px;
+    color: black;
+}
+
+
 
 
 .projectInfoContainer {
