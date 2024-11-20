@@ -1,3 +1,9 @@
+.actionButtons {
+    display: flex;
+    justify-content: center; /* Center the buttons horizontally */
+    gap: 10px; /* Add spacing between buttons */
+    align-items: center; /* Center the buttons vertically */
+}
 
 
 .projectInfoContainer {

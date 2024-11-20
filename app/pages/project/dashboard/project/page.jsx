@@ -77,8 +77,6 @@ const ProjectInfo = () => {
                     )}
           {activeSection === "documents" && <Documents uuid={uuid} />}
           {activeSection === "assignees" &&  <Assignees
-                            assignees={assignees}
-                            setAssignees={setAssignees}
                             uuid={uuid}
                             backendUrl={backendUrl}
                         />}
