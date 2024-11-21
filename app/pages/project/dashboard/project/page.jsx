@@ -9,6 +9,7 @@ import Details from "app/pages/project/dashboard/project/details/page";
 import Documents from "app/pages/project/dashboard/project/documents/page";
 import Assignees from "app/pages/project/dashboard/project/assignees/page";
 import Phases from "app/pages/project/dashboard/project/phases/page";
+import Deliverables from "app/pages/project/dashboard/project/deliverables/page";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
@@ -127,6 +128,14 @@ const ProjectInfo = () => {
                     setPhases={setPhases}
                 />
             )}
+
+            {activeSection === "deliverables" && (
+                <Deliverables
+                    uuid={uuid}
+                    backendUrl={backendUrl}
+                />
+            )}
+
             {activeSection === "calendar" && <Calendar />}
           </div>
 

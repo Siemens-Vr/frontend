@@ -34,6 +34,12 @@ const Navbar = ({ projectName, onSectionChange, activeSection }) => {
             Phases
           </button>
           <button
+              className={activeSection === "deliverables" ? styles.active : ""}
+              onClick={() => onSectionChange("deliverables")}
+          >
+            Deliverables
+          </button>
+          <button
             className={activeSection === "documents" ? styles.active : ""}
             onClick={() => onSectionChange("documents")}
           >
