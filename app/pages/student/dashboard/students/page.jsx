@@ -1,12 +1,11 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import AddLevelPopup  from '@/app/components/student/AddLevelPopUp'
-import Pagination from '@/app/components/pagination/pagination'
+import AddLevelPopup from '@/app/components/student/AddLevelPopUp';
+import Pagination from '@/app/components/pagination/pagination';
 import Search from '@/app/components/search/search';
-import styles from '@/app/styles/students/students.module.css'
+import styles from '@/app/styles/students/students.module.css';
 import Link from "next/link";
 import Swal from 'sweetalert2';
 import { pdf, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
@@ -15,38 +14,59 @@ import { config } from '/config';
 const StudentsPage = () => {
   const [students, setStudents] = useState([]);
   const [count, setCount] = useState(0);
-
-  // const [showPopup, setShowPopup] = useState(false);
   const [popupStudentId, setPopupStudentId] = useState(null);
-  const [levels, setLevels] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
 
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const q = searchParams.get('q') || '';
-  const page = searchParams.get('page') || 0;
+  const page = searchParams.get('page') || '0';
 
   useEffect(() => {
     if (!searchParams.has('page')) {
       const params = new URLSearchParams(searchParams);
-      params.set('page', 0);
+      params.set('page', '0');
       replace(`${window.location.pathname}?${params.toString()}`);
     }
-  }, []);
+  }, [searchParams, replace]);
 
-  const [isFilterDropdownVisible, setFilterDropdownVisible] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState(null);
-  const [filters, setFilters] = useState({ cohort: "", level: "", regNo: "", kcseNo: "" });
+//filters
+  const [filters, setFilters] = useState({
+    cohort: '',
+    level: '',
+    regNo: '',
+    kcseNo: '',
+  });
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const applyFilters = () => {
+    const filtered = students.filter((student) => {
+      return (
+        (filters.cohort === '' || student.cohort === filters.cohort) &&
+        (filters.level === '' || student.level === filters.level) &&
+        (filters.regNo === '' || student.regNo.includes(filters.regNo)) &&
+        (filters.kcseNo === '' || student.kcseNo.includes(filters.kcseNo))
+      );
+    });
+
+    setFilteredStudents(filtered);
+  };
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const url = `${config.baseURL}/students${q ? `?q=${q}` : ''}${page ? `${q ? '&' : '?'}page=${page}` : ''}`;
-        console.log(url)
+        console.log(url);
         const response = await fetch(url);
         const data = await response.json();
         if (response.ok) {
           const { content, count } = data;
           setStudents(content || []);
+          setFilteredStudents(content || []);
           setCount(count || 0);
         } else {
           console.error('Error fetching students:', data);
@@ -157,122 +177,134 @@ const StudentsPage = () => {
     }
   };
 
-  const toggleFilterDropdown = () => {
-    setFilterDropdownVisible(prev => !prev);
-    if (!isFilterDropdownVisible) setSelectedFilter(null);
-};
-
-  const handleFilterSelect = (filterType) => {
-    setSelectedFilter(filterType);
-  };
-
-  const handleFilterChange = (e) => {
-    const { value } = e.target;
-    setFilters((prev) => ({ ...prev, [selectedFilter]: value }));
-  };
-
-  return (
+    return (
       <div className={styles.container}>
         <div className={styles.top}>
-          <Search placeholder="Search for a student..."/>
-          <button className={styles.downloadButton}>Download PDF</button>
-
-          <div className={styles.buttonsGroup}>
+          <div className={styles.filterSection}>
+            <div className={styles.horizontalFilters}>
+              <div className={styles.filterField}>
+                <label htmlFor="cohort">Cohort:</label>
+                <div>
+                <select
+                  id="cohort"
+                  name="cohort"
+                  value={filters.cohort}
+                  onChange={handleFilterChange}
+                >
+                  <option value="">All</option>
+                  <option value="Cohort Test">Cohort Test</option>
+                  <option value="January Intake">January Intake</option>
+                </select>
+                </div>
+              </div>
+              <div className={styles.filterField}>
+                <label htmlFor="level">Level:</label>
+                <div>
+                <select
+                  id="level"
+                  name="level"
+                  value={filters.level}
+                  onChange={handleFilterChange}
+                >
+                  <option value="">All</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+                </div>
+              </div>
+              <div className={styles.filterField}>
+                <label htmlFor="regNo">Reg No:</label>
+                <input
+                  id="regNo"
+                  name="regNo"
+                  type="text"
+                  placeholder="Enter Registration Number"
+                  value={filters.regNo}
+                  onChange={handleFilterChange}
+                />
+              </div>
+              <div className={styles.filterField}>
+                <label htmlFor="kcseNo">KCSE No:</label>
+                <input
+                  id="kcseNo"
+                  name="kcseNo"
+                  type="text"
+                  placeholder="Enter KCSE Number"
+                  value={filters.kcseNo}
+                  onChange={handleFilterChange}
+                />
+                </div>
+                <>
+                <button className={styles.filterButton} onClick={applyFilters}>
+                  Filter
+                </button>
+                </>
+                <Search placeholder="Search for a student..." />
+            <div className={styles.buttonsGroup}>
+          <button className={styles.downloadButton} onClick={handleDownloadPDF}>Download PDF</button>
             <Link href="/pages/student/dashboard/students/add">
               <button className={styles.addButton}>Add New</button>
             </Link>
-            <button className={styles.filterButton} onClick={toggleFilterDropdown}>
-              Filter
-            </button>
           </div>
-
-          <div className={`${styles.filterDropdown} ${isFilterDropdownVisible ? styles.show : ""}`}>
-            <div className={styles.filterOptions}>
-              <button onClick={() => handleFilterSelect("cohort")}>Cohort</button>
-              <button onClick={() => handleFilterSelect("level")}>Level</button>
-              <button onClick={() => handleFilterSelect("regNo")}>Reg No</button>
-              <button onClick={() => handleFilterSelect("kcseNo")}>KCSE No</button>
-            </div>
-
-            {selectedFilter && (
-                <div className={styles.filterInput}>
-                  <input type="text" placeholder={`Enter ${selectedFilter}`} onChange={handleFilterChange}/>
-                  <button onClick={toggleFilterDropdown}>Apply Filters</button>
-                </div>
-            )}
           </div>
-
         </div>
-
-
-        {Array.isArray(students) && students.length > 0 ? (
-            <table className={styles.table}>
-              <thead>
+  </div>
+        {Array.isArray(filteredStudents) && filteredStudents.length > 0 ? (
+          <table className={styles.table}>
+            <thead>
               <tr>
                 <td>Reg No</td>
                 <td>Full Name</td>
-                {/* <td>Exam Results</td> */}
                 <td>Phone</td>
                 <td>Action</td>
               </tr>
-              </thead>
-              <tbody>
-              {students.map((student) => {
+            </thead>
+            <tbody>
+              {filteredStudents.map((student) => {
                 const fullName = `${student.firstName} ${student.lastName}`;
                 return (
-                    <tr key={student.uuid}>
-                      <td>{student.regNo}</td>
-
-                      <td>
-                        <div className={styles.student}>
-                          {fullName}
-                        </div>
-                      </td>
-                      <td>{student.phone}</td>
-                      {/* <td>{student.feePayment}</td> */}
-                      <td>
-                        <div className={styles.buttons}>
+                  <tr key={student.uuid}>
+                    <td>{student.regNo}</td>
+                    <td>
+                      <div className={styles.student}>
+                        {fullName}
+                      </div>
+                    </td>
+                    <td>{student.phone}</td>
+                    <td>
+                      <div className={styles.buttons}>
                         <Link href={`/pages/student/dashboard/students/${student.uuid}`}>
-                            <button className={`${styles.button} ${styles.view}`}>
-                              View
-                            </button>
-                          </Link>
-                          <button onClick={() => setPopupStudentId(student.uuid)}>Add Level</button>
-
-                          {popupStudentId === student.uuid && (
-                              <AddLevelPopup
-                                  studentId={student.uuid}
-                                  onClose={() => setPopupStudentId(null)}
-                              />
-                          )}
-
-                          {/* <button
-                        className={`${styles.button} ${styles.delete}`}
-                        onClick={() => handleUpdateLevel(student.uuid, fullName)}
-                      >
-                        update level
-                      </button> */}
-                          <button
-                              className={`${styles.button} ${styles.delete}`}
-                              onClick={() => handleDeleteStudent(student.uuid, fullName)}
-                          >
-                            Delete
+                          <button className={`${styles.button} ${styles.view}`}>
+                            View
                           </button>
-
-
-                        </div>
-                      </td>
-                    </tr>
+                        </Link>
+                        <button onClick={() => setPopupStudentId(student.uuid)}>Add Level</button>
+                        {popupStudentId === student.uuid && (
+                          <AddLevelPopup
+                            studentId={student.uuid}
+                            onClose={() => setPopupStudentId(null)}
+                          />
+                        )}
+                        <button
+                          className={`${styles.button} ${styles.delete}`}
+                          onClick={() => handleDeleteStudent(student.uuid, fullName)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
                 );
               })}
-              </tbody>
-            </table>
+            </tbody>
+          </table>
         ) : (
-            <p className={styles.noStudents}>No students available</p>
+          <p className={styles.noStudents}>No students available</p>
         )}
         <Pagination count={count}/>
       </div>
-  );
+    );
 };
 const StudentListPDF = ({students}) => {
   const styles = StyleSheet.create({
@@ -396,7 +428,3 @@ const StudentListPDF = ({students}) => {
   );
 };
 export default StudentsPage;
-
-
-
-
